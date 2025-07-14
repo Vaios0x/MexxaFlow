@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Box,
   Card,
@@ -17,7 +17,10 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  FormControl
+  FormControl,
+  CircularProgress,
+  Tooltip,
+  IconButton
 } from '@mui/material';
 
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
@@ -47,6 +50,9 @@ import { useMXNBWallet } from '../services/mxnb-wallet.service';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { motion } from 'framer-motion';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 
 // Estadísticas de pagos
 const paymentStats = [
@@ -101,29 +107,63 @@ const Dashboard: React.FC = () => {
   const [newScheduled, setNewScheduled] = useState({ to: '', amount: '', date: '' });
   const [newClabe, setNewClabe] = useState('');
   const [mpcInput, setMpcInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const handleOpenSend = () => setOpenSend(true);
   const handleCloseSend = () => setOpenSend(false);
   const handleOpenReceive = () => setOpenReceive(true);
   const handleCloseReceive = () => setOpenReceive(false);
-  const handleCopy = () => {
+
+  // Validaciones de formularios
+  const validateWalletAddress = (address: string) => /^0x[a-fA-F0-9]{40}$/.test(address);
+  const validateAmount = (amount: string) => {
+    const numAmount = Number(amount);
+    return !isNaN(numAmount) && numAmount > 0;
+  };
+
+  // Copiar dirección con feedback mejorado
+  const handleCopy = useCallback(() => {
     if (address) {
       navigator.clipboard.writeText(address);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
+      setTimeout(() => setCopied(false), 2000);
     }
-  };
+  }, [address]);
 
-  // Enviar pago simulado
-  const handleSend = () => {
-    if (sendTo && sendAmount && !isNaN(Number(sendAmount))) {
-      sendPayment(sendTo, Number(sendAmount), selectedToken);
+  // Enviar pago con validaciones
+  const handleSend = useCallback(() => {
+    setIsLoading(true);
+    if (!validateWalletAddress(sendTo)) {
+      setSnackbar({ open: true, message: 'Dirección de wallet inválida', severity: 'error' });
+      setIsLoading(false);
+      return;
     }
-    setSendTo('');
-    setSendAmount('');
-    setSelectedToken('MXNB');
-    setOpenSend(false);
-  };
+    if (!validateAmount(sendAmount)) {
+      setSnackbar({ open: true, message: 'Monto de pago inválido', severity: 'error' });
+      setIsLoading(false);
+      return;
+    }
+
+    const mxnbBalance = balance.find(b => b.symbol === 'MXNB')?.balance || 0;
+    if (Number(sendAmount) > mxnbBalance) {
+      setSnackbar({ open: true, message: 'Saldo insuficiente', severity: 'error' });
+      setIsLoading(false);
+      return;
+    }
+
+    setTimeout(() => {
+      sendPayment(sendTo, Number(sendAmount), selectedToken);
+      setSnackbar({ open: true, message: `Pago de ${sendAmount} MXNB enviado exitosamente`, severity: 'success' });
+      setSendTo('');
+      setSendAmount('');
+      setSelectedToken('MXNB');
+      setOpenSend(false);
+      setIsLoading(false);
+    }, 1500);
+  }, [sendTo, sendAmount, selectedToken, balance, sendPayment]);
+
   // Recibir pago simulado (desde un remitente mock)
   const handleReceive = () => {
     receivePayment('Remitente Demo', Math.floor(Math.random() * 1000) + 100, 'MXNB');
@@ -160,39 +200,58 @@ const Dashboard: React.FC = () => {
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
-  // Exportar transacciones a CSV
-  const handleExportCSV = () => {
-    if (!transactions.length) return;
-    const headers = ['Fecha', 'Contraparte', 'Tipo', 'Monto', 'Token', 'Estado'];
-    const rows = transactions.map(tx => [
-      tx.date.toLocaleString('es-MX', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
-      tx.type === 'sent' ? tx.to : tx.from,
-      tx.type === 'sent' ? 'Enviado' : 'Recibido',
-      tx.amount,
-      tx.token,
-      tx.status === 'completed' ? 'Completado' : tx.status === 'pending' ? 'Pendiente' : 'Fallido',
-    ]);
-    const csvContent = [headers, ...rows]
-      .map(e => e.join(','))
-      .join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'transacciones.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // Exportación CSV mejorada
+  const handleExportCSV = useCallback(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      if (!transactions.length) {
+        setSnackbar({ open: true, message: 'No hay transacciones para exportar', severity: 'error' });
+        setIsLoading(false);
+        return;
+      }
 
-  // Filtrar transacciones según búsqueda y filtros
-  const filteredTransactions = transactions.filter(tx => {
-    const contraparte = tx.type === 'sent' ? tx.to : tx.from;
-    const matchSearch = contraparte.toLowerCase().includes(search.toLowerCase());
-    const matchType = filterType === 'all' || (filterType === 'sent' && tx.type === 'sent') || (filterType === 'received' && tx.type === 'received');
-    const matchToken = filterToken === 'all' || tx.token === filterToken;
-    return matchSearch && matchType && matchToken;
-  });
+      const headers = ['Fecha', 'Contraparte', 'Tipo', 'Monto', 'Token', 'Estado', 'Hash de Transacción'];
+      const rows = transactions.map(tx => [
+        tx.date.toLocaleString('es-MX', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
+        tx.type === 'sent' ? tx.to : tx.from,
+        tx.type === 'sent' ? 'Enviado' : 'Recibido',
+        tx.amount.toFixed(2),
+        tx.token,
+        tx.status === 'completed' ? 'Completado' : tx.status === 'pending' ? 'Pendiente' : 'Fallido',
+        `0x${Math.random().toString(36).substring(2, 15)}` // Simula hash de transacción
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map(e => e.map(cell => `"${cell}"`).join(','))
+        .join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `transacciones_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setSnackbar({ open: true, message: 'Exportación de CSV completada', severity: 'success' });
+      setIsLoading(false);
+    }, 1500);
+  }, [transactions]);
+
+  // Paginación de transacciones
+  const paginatedTransactions = useMemo(() => {
+    const filteredTxs = transactions.filter(tx => {
+      const contraparte = tx.type === 'sent' ? tx.to : tx.from;
+      const matchSearch = contraparte.toLowerCase().includes(search.toLowerCase());
+      const matchType = filterType === 'all' || (filterType === 'sent' && tx.type === 'sent') || (filterType === 'received' && tx.type === 'received');
+      const matchToken = filterToken === 'all' || tx.token === filterToken;
+      return matchSearch && matchType && matchToken;
+    });
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredTxs.slice(startIndex, startIndex + itemsPerPage);
+  }, [transactions, search, filterType, filterToken, currentPage]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -235,59 +294,78 @@ const Dashboard: React.FC = () => {
           Retirar MXNB
         </Button>
       </Stack>
-      {/* Modal Enviar Pago */}
-      <Dialog open={openSend} onClose={handleCloseSend}>
+      {/* Modales con transiciones y validaciones */}
+      <Dialog 
+        open={openSend} 
+        onClose={handleCloseSend}
+        TransitionComponent={motion.div}
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, #1E1E1E 0%, #121212 100%)',
+            color: 'white'
+          }
+        }}
+      >
         <DialogTitle>Enviar Pago MXNB</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 320 }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Envía MXNB a cualquier dirección de wallet en la red Arbitrum Sepolia.
-          </Typography>
           <TextField
             label="Dirección de destino"
             value={sendTo}
             onChange={e => setSendTo(e.target.value)}
             fullWidth
             autoFocus
-            placeholder="0x..."
+            error={sendTo.length > 0 && !validateWalletAddress(sendTo)}
+            helperText={sendTo.length > 0 && !validateWalletAddress(sendTo) ? 'Dirección de wallet inválida' : ''}
+            InputProps={{
+              endAdornment: sendTo.length > 0 && validateWalletAddress(sendTo) ? (
+                <CheckCircleIcon color="success" />
+              ) : sendTo.length > 0 ? (
+                <ErrorIcon color="error" />
+              ) : null
+            }}
           />
           <TextField
-            label="Monto en MXNB"
+            label="Monto a enviar"
+            type="number"
             value={sendAmount}
             onChange={e => setSendAmount(e.target.value)}
             fullWidth
-            type="number"
-            placeholder="0.00"
+            error={sendAmount.length > 0 && !validateAmount(sendAmount)}
+            helperText={sendAmount.length > 0 && !validateAmount(sendAmount) ? 'Monto inválido' : ''}
+            InputProps={{
+              endAdornment: sendAmount.length > 0 && validateAmount(sendAmount) ? (
+                <CheckCircleIcon color="success" />
+              ) : sendAmount.length > 0 ? (
+                <ErrorIcon color="error" />
+              ) : null
+            }}
           />
           <FormControl fullWidth>
-            <InputLabel id="token-select-label">Token</InputLabel>
+            <InputLabel>Token</InputLabel>
             <Select
-              labelId="token-select-label"
               value={selectedToken}
               label="Token"
               onChange={e => setSelectedToken(e.target.value)}
             >
-              {balance.map((b) => (
-                <MenuItem key={b.symbol} value={b.symbol}>{b.symbol}</MenuItem>
-              ))}
+              <MenuItem value="MXNB">MXNB</MenuItem>
+              <MenuItem value="USDT">USDT</MenuItem>
             </Select>
           </FormControl>
-          <Box sx={{ p: 2, bgcolor: 'primary.light', borderRadius: 1, color: 'primary.contrastText' }}>
-            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-              Transacción instantánea
-            </Typography>
-            <Typography variant="caption">
-              Comisión de red: ~$0.01 USD. Confirmación en segundos.
-            </Typography>
-          </Box>
-          <Typography variant="caption" color="text.secondary">
-            * Esta es una demo visual. El pago se simula y actualiza el balance y las transacciones.
-          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseSend} color="primary">Cancelar</Button>
-          <Button onClick={handleSend} color="primary" variant="contained">Enviar</Button>
+          <Button onClick={handleCloseSend} color="secondary">Cancelar</Button>
+          <Button 
+            onClick={handleSend} 
+            color="primary" 
+            variant="contained"
+            disabled={!validateWalletAddress(sendTo) || !validateAmount(sendAmount) || isLoading}
+          >
+            {isLoading ? <CircularProgress size={24} /> : 'Enviar Pago'}
+          </Button>
         </DialogActions>
       </Dialog>
+
       {/* Modal Recibir Pago */}
       <Dialog open={openReceive} onClose={handleCloseReceive}>
         <DialogTitle>Recibir Pago MXNB</DialogTitle>
@@ -466,8 +544,9 @@ const Dashboard: React.FC = () => {
               startIcon={<DownloadIcon />}
               onClick={handleExportCSV}
               sx={{ fontWeight: 'bold' }}
+              disabled={isLoading}
             >
-              Exportar historial
+              {isLoading ? <CircularProgress size={20} color="primary" /> : 'Exportar historial'}
             </Button>
           </Box>
           {/* Filtros y búsqueda */}
@@ -528,7 +607,7 @@ const Dashboard: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredTransactions.slice(0, 8).map((tx, idx) => (
+                {paginatedTransactions.map((tx, idx) => (
                   <TableRow
                     key={tx.id}
                     hover
@@ -562,6 +641,26 @@ const Dashboard: React.FC = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          {transactions.length > itemsPerPage && (
+            <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                Anterior
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(transactions.length / itemsPerPage), prev + 1))}
+                disabled={currentPage === Math.ceil(transactions.length / itemsPerPage) || transactions.length === 0}
+              >
+                Siguiente
+              </Button>
+            </Stack>
+          )}
         </CardContent>
       </Card>
 
