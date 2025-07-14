@@ -15,7 +15,7 @@ import DialogContent from '@mui/material/DialogContent';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { useMockApp } from '../context/MockAppContext';
+import { useMockApp } from '../context/MockAppContext.tsx';
 
 // Importaciones de RainbowKit
 import { ConnectButton } from '@rainbow-me/rainbowkit';
