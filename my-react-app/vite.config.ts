@@ -16,7 +16,9 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       global: {},
-      'process.env': env,
+      'process.env': {
+        VITE_WALLETCONNECT_PROJECT_ID: env.VITE_WALLETCONNECT_PROJECT_ID,
+      },
     },
   };
 })

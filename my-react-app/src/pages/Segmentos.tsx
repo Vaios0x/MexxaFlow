@@ -9,12 +9,24 @@ import {
   DialogTitle,
   DialogContent
 } from '@mui/material';
+import type { OverridableStringUnion } from '@mui/types';
+import type { ChipPropsColorOverrides } from '@mui/material/Chip';
 
-const segmentosData = [
+type SegmentoColor = OverridableStringUnion<'default' | 'primary' | 'success' | 'secondary' | 'info' | 'warning' | 'error', ChipPropsColorOverrides>;
+
+type Segmento = {
+  titulo: string;
+  emoji: string;
+  color: SegmentoColor;
+  descripcion: string;
+  beneficios: string[];
+  comision: string;
+};
+
+const segmentosData: Segmento[] = [
   {
     titulo: 'Freelancers Tecnológicos',
     emoji: '💻',
-    icono: '💻',
     color: 'primary',
     descripcion: 'Desarrolladores, diseñadores UX/UI, programadores y especialistas en tecnología.',
     beneficios: [
@@ -115,6 +127,19 @@ const segmentosData = [
       'Conversión de divisas'
     ],
     comision: '0.5%'
+  },
+  {
+    titulo: 'Estudiante',
+    emoji: '🎓',
+    color: 'info',
+    descripcion: 'Universitarios, preparatorianos y estudiantes de cursos digitales que buscan recibir pagos, becas o apoyos de manera rápida y segura.',
+    beneficios: [
+      'Pagos de becas instantáneos',
+      'Apoyos y premios directos',
+      'Gestión de colegiaturas',
+      'Descuentos exclusivos'
+    ],
+    comision: '0.1%'
   }
 ];
 
@@ -134,8 +159,11 @@ const Segmentos: React.FC = () => {
       <Typography variant="h3" align="center" sx={{ fontWeight: 900, mb: 2, color: 'primary.main' }}>
         Segmentos
       </Typography>
-      <Typography align="center" sx={{ mb: 6, color: 'text.secondary', fontSize: 20 }}>
-        Soluciones de pago personalizadas para cada tipo de trabajador independiente
+      <Typography align="center" sx={{ mb: 2, color: 'text.secondary', fontSize: 20 }}>
+        Elige el perfil que mejor se adapta a ti y descubre cómo MexxaFlow potencia tu actividad con pagos instantáneos, comisiones mínimas y herramientas digitales.
+      </Typography>
+      <Typography align="center" sx={{ mb: 6, color: 'primary.main', fontWeight: 700, fontSize: 18 }}>
+        ¡Personaliza tu experiencia según tu segmento!
       </Typography>
       <Box
         sx={{
@@ -146,56 +174,97 @@ const Segmentos: React.FC = () => {
         }}
       >
         {segmentosData.map((segmento) => (
-          <Card
-            key={segmento.titulo}
-            sx={{
-              position: 'relative',
-              p: 4,
-              borderRadius: 4,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-              background: 'linear-gradient(135deg, #23272F 60%, #1A1D23 100%)',
-              color: 'white',
-              minHeight: 260,
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              cursor: 'pointer',
-              '&:hover': {
-                transform: 'scale(1.04)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
-              }
-            }}
-            onClick={() => handleOpenDetails(segmento)}
-          >
-            <Box sx={{ position: 'absolute', top: 24, right: 24 }}>
-              <Chip
-                label={segmento.comision}
-                color="primary"
+          <Box key={segmento.titulo} sx={{ position: 'relative' }}>
+            <Card
+              sx={{
+                position: 'relative',
+                p: 4,
+                borderRadius: 4,
+                boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+                background: 'linear-gradient(135deg, #23272F 60%, #1A1D23 100%)',
+                color: 'white',
+                minHeight: 260,
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                cursor: 'pointer',
+                overflow: 'visible',
+                '&:hover': {
+                  transform: 'scale(1.04)',
+                  boxShadow: '0 8px 32px 0 #3B82F6',
+                }
+              }}
+              onClick={() => handleOpenDetails(segmento)}
+              onMouseEnter={e => {
+                const btn = e.currentTarget.querySelector('.simular-btn') as HTMLElement | null;
+                if (btn) btn.style.opacity = '1';
+              }}
+              onMouseLeave={e => {
+                const btn = e.currentTarget.querySelector('.simular-btn') as HTMLElement | null;
+                if (btn) btn.style.opacity = '0';
+              }}
+            >
+              <Box sx={{ position: 'absolute', top: 24, right: 24, zIndex: 2 }}>
+                <Chip
+                  label={segmento.comision}
+                  color={segmento.color}
+                  sx={{
+                    fontWeight: 'bold',
+                    fontSize: 16,
+                    px: 2,
+                    py: 0.5,
+                    borderRadius: 2,
+                    boxShadow: '0 2px 8px rgba(59,130,246,0.15)'
+                  }}
+                />
+              </Box>
+              <Box sx={{ fontSize: 56, mb: 2, textAlign: 'center' }}>{segmento.emoji}</Box>
+              <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, textAlign: 'center' }}>
+                {segmento.titulo}
+              </Typography>
+              <Typography sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', fontSize: 18 }}>
+                {segmento.descripcion}
+              </Typography>
+              <Box
+                className="simular-btn"
                 sx={{
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                  px: 2,
-                  py: 0.5,
-                  borderRadius: 2,
-                  boxShadow: '0 2px 8px rgba(59,130,246,0.15)'
+                  opacity: 0,
+                  transition: 'opacity 0.2s',
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: 24,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                  zIndex: 3
                 }}
-              />
-            </Box>
-            <Box sx={{ fontSize: 56, mb: 2, textAlign: 'center' }}>{segmento.emoji}</Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, textAlign: 'center' }}>
-              {segmento.titulo}
-            </Typography>
-            <Typography sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', fontSize: 18 }}>
-              {segmento.descripcion}
-            </Typography>
-          </Card>
+              >
+                <Box
+                  sx={{
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    px: 3,
+                    py: 1,
+                    borderRadius: 2,
+                    fontWeight: 700,
+                    fontSize: 16,
+                    boxShadow: '0 2px 8px rgba(59,130,246,0.15)',
+                    pointerEvents: 'auto',
+                  }}
+                >
+                  Simular flujo
+                </Box>
+              </Box>
+            </Card>
+          </Box>
         ))}
       </Box>
-
       {/* Diálogo de detalles */}
       <Dialog
         open={!!selectedSegmento}
         onClose={handleCloseDetails}
         maxWidth="md"
         fullWidth
+        PaperProps={{ sx: { borderRadius: 4 } }}
       >
         {selectedSegmento && (
           <>
@@ -204,7 +273,9 @@ const Segmentos: React.FC = () => {
                 textAlign: 'center',
                 background: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)',
                 color: 'white',
-                fontWeight: 900
+                fontWeight: 900,
+                fontSize: 32,
+                letterSpacing: 1
               }}
             >
               {selectedSegmento.titulo}
@@ -214,19 +285,24 @@ const Segmentos: React.FC = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                p: 4
+                p: { xs: 2, sm: 4 }
               }}
             >
               <Box
                 sx={{
                   fontSize: '5rem',
                   mb: 2,
-                  color: '#3B82F6'
+                  color: '#3B82F6',
+                  textShadow: '0 2px 12px rgba(59,130,246,0.15)'
                 }}
               >
                 {selectedSegmento.emoji}
               </Box>
-
+              <Chip
+                label={`Comisión: ${selectedSegmento.comision}`}
+                color={selectedSegmento.color}
+                sx={{ fontWeight: 'bold', fontSize: 18, px: 2, py: 1, mb: 2, borderRadius: 2 }}
+              />
               <Typography
                 variant="body1"
                 sx={{
@@ -237,25 +313,84 @@ const Segmentos: React.FC = () => {
               >
                 {selectedSegmento.descripcion}
               </Typography>
-
               <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1, mb: 3 }}>
                 {selectedSegmento.beneficios.map((beneficio: string, idx: number) => (
                   <Chip
                     key={idx}
                     label={beneficio}
-                    variant="outlined"
+                    variant="filled"
                     color="primary"
-                    sx={{ m: 0.5 }}
+                    sx={{ m: 0.5, fontWeight: 600 }}
                   />
                 ))}
               </Box>
-
-              <Chip
-                label={`Comisión: ${selectedSegmento.comision}`}
-                color="primary"
-                sx={{ fontWeight: 'bold' }}
-              />
+              <Box sx={{ display: 'flex', gap: 2, mt: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+                <Box
+                  sx={{
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 2,
+                    fontWeight: 700,
+                    fontSize: 18,
+                    boxShadow: '0 2px 8px rgba(59,130,246,0.15)',
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }}
+                  onClick={() => alert('Simulación de flujo para ' + selectedSegmento.titulo)}
+                >
+                  Simular flujo
+                </Box>
+                <Box
+                  sx={{
+                    bgcolor: 'success.main',
+                    color: 'white',
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 2,
+                    fontWeight: 700,
+                    fontSize: 18,
+                    boxShadow: '0 2px 8px rgba(16,185,129,0.15)',
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: 'success.dark' }
+                  }}
+                  onClick={() => { handleCloseDetails(); alert('Segmento seleccionado: ' + selectedSegmento.titulo); }}
+                >
+                  Seleccionar este segmento
+                </Box>
+              </Box>
+              <Box sx={{ mt: 4 }}>
+                <Box
+                  sx={{
+                    color: 'text.secondary',
+                    textAlign: 'center',
+                    fontSize: 16
+                  }}
+                >
+                  ¿Tienes dudas? <b>Contáctanos para una demo personalizada.</b>
+                </Box>
+              </Box>
             </DialogContent>
+            <Box sx={{ display: 'flex', justifyContent: 'center', pb: 3 }}>
+              <Box
+                sx={{
+                  mt: 2,
+                  bgcolor: 'grey.200',
+                  color: 'primary.main',
+                  px: 4,
+                  py: 1,
+                  borderRadius: 2,
+                  fontWeight: 700,
+                  fontSize: 16,
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: 'grey.300' }
+                }}
+                onClick={handleCloseDetails}
+              >
+                Cerrar
+              </Box>
+            </Box>
           </>
         )}
       </Dialog>

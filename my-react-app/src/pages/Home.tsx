@@ -78,6 +78,28 @@ const benefits = [
   { emoji: '💳', text: 'Integración MXNB', color: 'info' },
 ];
 
+// Testimonios mock
+const testimonials = [
+  {
+    name: 'Ana López',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    segment: 'Freelancer',
+    text: 'Antes perdía 8% en comisiones de PayPal. Con MXNB solo pago 0.3% y recibo mi dinero al instante. ¡Ahorro $2,400 MXN al mes!'
+  },
+  {
+    name: 'Carlos Ruiz',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    segment: 'Repartidor',
+    text: 'Los bancos me cobraban $50 MXN por transferencia. Ahora con MXNB pago $0.50 y recibo mi pago en segundos. ¡Revolucionó mi negocio!'
+  },
+  {
+    name: 'Sofía Gómez',
+    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
+    segment: 'Vendedora Online',
+    text: 'Vendo en Mercado Libre y me cobraban 16% de comisión. Con MXNB solo pago 0.4% y mis clientes me pagan directo. ¡Gano $15,000 MXN más al mes!'
+  }
+];
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { isConnected } = useAccount();
@@ -251,6 +273,27 @@ const Home: React.FC = () => {
             </Box>
           </CardContent>
         </Card>
+
+        {/* Testimonios */}
+        <Box sx={{ mt: 8, mb: 8 }}>
+          <Typography variant="h4" align="center" sx={{ fontWeight: 900, mb: 4, color: 'primary.main' }}>
+            Testimonios de Usuarios
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, justifyContent: 'center', alignItems: 'stretch' }}>
+            {testimonials.map((t) => (
+              <Card key={t.name} sx={{ flex: 1, minWidth: 260, maxWidth: 340, borderRadius: 4, boxShadow: '0 4px 24px rgba(0,0,0,0.12)', background: 'linear-gradient(135deg, #23272F 60%, #1A1D23 100%)', color: 'white', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <Box sx={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', mb: 2, border: '3px solid #3B82F6' }}>
+                  <img src={t.avatar} alt={t.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{t.name}</Typography>
+                <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 600, mb: 2 }}>{t.segment}</Typography>
+                <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: 17, textAlign: 'center', mb: 1 }}>
+                  “{t.text}”
+                </Typography>
+              </Card>
+            ))}
+          </Box>
+        </Box>
 
         {/* Sección Cómo Funciona */}
         <section id="como-funciona" style={{ marginTop: 80, marginBottom: 80 }}>

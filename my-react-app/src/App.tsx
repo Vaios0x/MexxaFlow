@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Navbar from './components/Navbar';
 import { Web3Provider } from './web3/rainbowConfig';
 import Footer from './components/Footer';
+import { MockAppProvider } from './context/MockAppContext';
 
 // Importar páginas
 import Home from './pages/Home';
@@ -28,20 +29,22 @@ const theme = createTheme({
 const App: React.FC = () => {
   return (
     <Web3Provider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/segmentos" element={<Segmentos />} />
-            <Route path="/precios" element={<Precios />} />
-            <Route path="/ayuda" element={<Ayuda />} />
-          </Routes>
-          <Footer />
-        </Router>
-      </ThemeProvider>
+      <MockAppProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Router>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/segmentos" element={<Segmentos />} />
+              <Route path="/precios" element={<Precios />} />
+              <Route path="/ayuda" element={<Ayuda />} />
+            </Routes>
+            <Footer />
+          </Router>
+        </ThemeProvider>
+      </MockAppProvider>
     </Web3Provider>
   );
 };

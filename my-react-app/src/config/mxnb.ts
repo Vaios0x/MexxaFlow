@@ -1,31 +1,41 @@
-// Configuración del token MXNB
+// Configuración centralizada para el token MXNB y redes
 export const MXNB_CONFIG = {
-  // Dirección del contrato en Arbitrum Sepolia
-  TOKEN_ADDRESS: '0x82B9e52b26A2954E113F94Ff26647754d5a4247D',
-  
-  // Información del token
-  SYMBOL: 'MXNB',
-  NAME: 'Mexican Peso Stablecoin',
-  DECIMALS: 18,
-  
-  // Redes soportadas
-  SUPPORTED_NETWORKS: {
+  // Contratos por red
+  CONTRACTS: {
     ARBITRUM_SEPOLIA: {
       chainId: 421614,
       name: 'Arbitrum Sepolia',
+      tokenAddress: '0x82B9e52b26A2954E113F94Ff26647754d5a4247D',
+      bridgeAddress: '', // Si aplica
+      faucetAddress: '', // Si aplica
       rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
-      explorer: 'https://sepolia.arbiscan.io'
-    }
+      explorer: 'https://sepolia.arbiscan.io',
+    },
+    // Ejemplo para mainnet (descomentar y completar si se usa)
+    // ARBITRUM_MAINNET: {
+    //   chainId: 42161,
+    //   name: 'Arbitrum One',
+    //   tokenAddress: '0x...',
+    //   bridgeAddress: '',
+    //   faucetAddress: '',
+    //   rpcUrl: 'https://arb1.arbitrum.io/rpc',
+    //   explorer: 'https://arbiscan.io',
+    // },
   },
-  
-  // Configuración de actualización
+
+  // Token info
+  SYMBOL: 'MXNB',
+  NAME: 'Mexican Peso Stablecoin',
+  DECIMALS: 18,
+
+  // Parámetros generales
   REFRESH_INTERVALS: {
     BALANCE: 30000, // 30 segundos
     STATS: 60000,   // 1 minuto
     PRICE: 15000    // 15 segundos
   },
-  
-  // URLs de recursos
+
+  // Recursos
   RESOURCES: {
     LOGO: 'https://your-token-image-url.com/mxnb.png',
     WEBSITE: 'https://mxnb.com',
@@ -69,14 +79,29 @@ export const MXNB_ABI = [
 export const ADD_TOKEN_CONFIG = {
   type: 'ERC20',
   options: {
-    address: MXNB_CONFIG.TOKEN_ADDRESS,
+    address: MXNB_CONFIG.CONTRACTS.ARBITRUM_SEPOLIA.tokenAddress,
     symbol: MXNB_CONFIG.SYMBOL,
     decimals: MXNB_CONFIG.DECIMALS,
     image: MXNB_CONFIG.RESOURCES.LOGO
   }
 };
 
-// Funciones de utilidad
+// Utilidades para redes y contratos
+export const getNetworkByChainId = (chainId: number) => {
+  return Object.values(MXNB_CONFIG.CONTRACTS).find(n => n.chainId === chainId);
+};
+
+export const getExplorerUrl = (chainId: number) => {
+  const net = getNetworkByChainId(chainId);
+  return net?.explorer || '';
+};
+
+export const getTokenAddress = (chainId: number) => {
+  const net = getNetworkByChainId(chainId);
+  return net?.tokenAddress || '';
+};
+
+// Utilidades de formato
 export const formatMXNBCurrency = (amount: number): string => {
   return amount.toLocaleString('es-MX', {
     style: 'currency',
@@ -99,5 +124,10 @@ export const validateMXNBAddress = (address: string): boolean => {
 };
 
 export const validateMXNBNetwork = (chainId: number): boolean => {
-  return chainId === MXNB_CONFIG.SUPPORTED_NETWORKS.ARBITRUM_SEPOLIA.chainId;
+  return !!getNetworkByChainId(chainId);
+};
+
+// Validación de CLABE (básica: 18 dígitos)
+export const validateCLABE = (clabe: string): boolean => {
+  return /^\d{18}$/.test(clabe);
 }; 

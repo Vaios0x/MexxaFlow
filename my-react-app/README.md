@@ -1,69 +1,78 @@
-# React + TypeScript + Vite
+# MexxaFlow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Plataforma de pagos instantáneos, seguros y sin fronteras para trabajadores independientes en Latinoamérica.**
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 ¿Qué es MexxaFlow?
+MexxaFlow es una plataforma web que permite enviar y recibir pagos en la stablecoin MXNB sobre la red Arbitrum Sepolia, con comisiones mínimas y máxima seguridad. Pensada para freelancers, repartidores, creadores, educadores y cualquier trabajador independiente.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tecnologías principales
+- **React + Vite** (frontend)
+- **TypeScript**
+- **Material UI (MUI)** para UI moderna
+- **wagmi + RainbowKit** para conexión Web3
+- **TailwindCSS** (opcional, para estilos utilitarios)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📁 Estructura del proyecto
+```
+my-react-app/
+  ├── src/
+  │   ├── components/      # Componentes reutilizables (Navbar, Footer, MXNBBalance...)
+  │   ├── pages/           # Páginas principales (Dashboard, Home, Segmentos...)
+  │   ├── web3/            # Configuración de wagmi, RainbowKit y contratos
+  │   ├── hooks/           # Custom hooks (useMXNBBalance...)
+  │   ├── config/          # Configuración de tokens, etc.
+  │   └── ...
+  ├── public/              # Archivos estáticos
+  ├── package.json         # Dependencias y scripts
+  └── ...
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚡ Funcionalidades principales
+- Conexión de wallet (MetaMask, Rabby, etc.)
+- Visualización de balance MXNB en tiempo real
+- Envío y recepción de pagos (demo visual)
+- QR para recibir pagos
+- Agregar token MXNB a la wallet fácilmente
+- Estadísticas y segmentos personalizados
+- UX/UI moderna y responsiva
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## 🖥️ Cómo correr el proyecto localmente
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/Vaios0x/MexxaFlow.git
+   cd MexxaFlow/my-react-app
+   ```
+2. Instala dependencias:
+   ```bash
+   npm install
+   ```
+3. Crea un archivo `.env` si es necesario (ver `.env.example`)
+4. Inicia el servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
+5. Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
+
+---
+
+## 🤝 Contribuir
+¡Pull requests y sugerencias son bienvenidas! Abre un issue o PR para mejorar la plataforma.
+
+---
+
+## 📄 Licencia
+MIT
+
+---
+
+**Hecho con ❤️ por Vaios0x y la comunidad.**

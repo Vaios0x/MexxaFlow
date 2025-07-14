@@ -20,6 +20,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useMockApp } from '../context/MockAppContext';
 
 interface MXNBBalanceProps {
   showAddTokenButton?: boolean;
@@ -37,13 +38,28 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
   showAddTokenButton = true, 
   compact = false 
 }) => {
-  const { balance, loading, error, refresh, isConnected } = useMXNBBalance();
+  const { balance, user } = useMockApp();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [prevBalance, setPrevBalance] = useState<number | null>(null);
 
+  // Simular refresco de balance
   const handleRefresh = () => {
-    refresh();
+    setShowAlert(true);
+    setTimeout(() => setShowAlert(false), 1500);
+    // Simulación: no cambia el balance, pero podrías randomizarlo si quieres
   };
+
+  // Detectar cambio de balance (alerta animada)
+  React.useEffect(() => {
+    const mxnb = balance.find(b => b.symbol === 'MXNB')?.balance ?? 0;
+    if (prevBalance !== null && mxnb !== prevBalance) {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 1500);
+    }
+    setPrevBalance(mxnb);
+  }, [balance]);
 
   const handleOpenModal = () => setOpen(true);
   const handleCloseModal = () => setOpen(false);
@@ -63,7 +79,7 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
             address: '0x82B9e52b26A2954E113F94Ff26647754d5a4247D',
             symbol: 'MXNB',
             decimals: 18,
-            image: 'https://your-token-image-url.com/mxnb.png' // Cambia por la URL real si tienes una
+            image: 'https://your-token-image-url.com/mxnb.png'
           }
         }
       })
@@ -83,33 +99,17 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
   };
 
   if (compact) {
+    const mxnb = balance.find(b => b.symbol === 'MXNB')?.balance ?? 0;
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography variant="body2" color="text.secondary">
           MXNB:
         </Typography>
-        {loading ? (
-          <CircularProgress size={16} />
-        ) : !isConnected ? (
-          <Typography variant="body2" color="text.secondary">
-            No conectado
-          </Typography>
-        ) : error ? (
-          <Box>
-            <Typography variant="body2" color="error">
-              Error
-            </Typography>
-            <Typography variant="caption" color="error">
-              {error}
-            </Typography>
-          </Box>
-        ) : (
-          <Typography variant="body2" fontWeight="bold">
-            {balance !== null ? `${balance.toFixed(2)} MXNB` : '0.00 MXNB'}
-          </Typography>
-        )}
+        <Typography variant="body2" fontWeight="bold">
+          {mxnb.toFixed(2)} MXNB
+        </Typography>
         <Tooltip title="Actualizar saldo">
-          <IconButton size="small" onClick={handleRefresh} disabled={loading}>
+          <IconButton size="small" onClick={handleRefresh}>
             <RefreshIcon fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -142,7 +142,6 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
           <Tooltip title="Actualizar saldo">
             <IconButton
               onClick={handleRefresh}
-              disabled={loading}
               sx={{
                 position: 'absolute',
                 top: 16,
@@ -181,65 +180,38 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
               color: 'rgba(255,255,255,0.8)'
             }}
           >
-            Balance MXNB
+            Balance de Tokens
           </Typography>
 
-          {!isConnected ? (
+          {!user ? (
             <Box sx={{ textAlign: 'center', py: 2 }}>
               <Typography variant="h6" sx={{ mb: 2 }}>
-                Conecta tu billetera
+                Inicia sesión para ver tu saldo
               </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                Para ver tu saldo de MXNB
-              </Typography>
-            </Box>
-          ) : loading ? (
-            <Box sx={{ textAlign: 'center', py: 2 }}>
-              <CircularProgress sx={{ color: 'white', mb: 2 }} />
-              <Typography variant="body2">
-                Cargando saldo...
-              </Typography>
-            </Box>
-          ) : error ? (
-            <Box sx={{ textAlign: 'center', py: 2 }}>
-              <Alert severity="error" sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.1)' }}>
-                Error: {error}
-              </Alert>
-              <Button
-                variant="outlined"
-                color="inherit"
-                onClick={handleRefresh}
-                sx={{
-                  color: 'white',
-                  borderColor: 'rgba(255,255,255,0.5)',
-                  '&:hover': {
-                    borderColor: 'white',
-                    backgroundColor: 'rgba(255,255,255,0.1)'
-                  }
-                }}
-              >
-                Reintentar
-              </Button>
             </Box>
           ) : (
             <>
-              <Typography
-                variant="h3"
-                sx={{
-                  mb: 2,
-                  fontWeight: 'bold',
-                  textShadow: '0 4px 6px rgba(0,0,0,0.2)'
-                }}
-              >
-                {balance !== null 
-                  ? `${balance.toLocaleString('es-MX', { 
-                      minimumFractionDigits: 2, 
-                      maximumFractionDigits: 2 
-                    })} MXNB`
-                  : '0.00 MXNB'
-                }
-              </Typography>
-
+              {showAlert && (
+                <Alert severity="success" sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.1)' }}>
+                  ¡Saldo actualizado!
+                </Alert>
+              )}
+              {balance.map((b) => (
+                <Typography
+                  key={b.symbol}
+                  variant="h3"
+                  sx={{
+                    mb: 2,
+                    fontWeight: 'bold',
+                    textShadow: '0 4px 6px rgba(0,0,0,0.2)'
+                  }}
+                >
+                  {b.balance.toLocaleString('es-MX', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })} {b.symbol}
+                </Typography>
+              ))}
               <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Chip
                   label="Stablecoin MXNB"
@@ -249,7 +221,6 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
                     background: 'rgba(255,255,255,0.2)'
                   }}
                 />
-                
                 {showAddTokenButton && (
                   <Button 
                     variant="outlined" 
@@ -268,7 +239,6 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
                   </Button>
                 )}
               </Box>
-
               <Typography
                 variant="caption"
                 sx={{
