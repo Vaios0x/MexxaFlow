@@ -15,7 +15,7 @@ import DialogContent from '@mui/material/DialogContent';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { useMockApp } from '../context/MockAppContext';
+import { useMockApp, MockAppProvider } from '../context/MockAppContext';
 
 // Importaciones de RainbowKit
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -30,7 +30,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 
-const Navbar: React.FC = () => {
+const NavbarContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -42,7 +42,19 @@ const Navbar: React.FC = () => {
   const [appBarKey, setAppBarKey] = React.useState(0); // Para animación
 
   // Contexto global simulado
-  const { user, login, logout, notifications, markNotificationRead, markAllNotificationsRead, theme, language, toggleTheme, setLanguage } = useMockApp();
+  const { 
+    user = null, 
+    login = () => {}, 
+    logout = () => {}, 
+    notifications = [], 
+    markNotificationRead = () => {}, 
+    markAllNotificationsRead = () => {}, 
+    theme = 'dark', 
+    language = 'es', 
+    toggleTheme = () => {}, 
+    setLanguage = () => {} 
+  } = useMockApp() || {};
+
   const unreadCount = notifications.filter(n => !n.read).length;
   const [themeAnchor, setThemeAnchor] = React.useState<null | HTMLElement>(null);
   const [langAnchor, setLangAnchor] = React.useState<null | HTMLElement>(null);
@@ -386,9 +398,35 @@ const Navbar: React.FC = () => {
               </Menu>
             </>
           ) : (
-            <Button color="inherit" variant="outlined" onClick={login} sx={{ fontWeight: 'bold', borderColor: 'white', color: 'white' }}>
-              Iniciar sesión
-            </Button>
+            <>
+              <IconButton 
+                color="inherit" 
+                onClick={handleMenu}
+                sx={{ ml: 1 }}
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                <MenuItem onClick={() => { handleClose(); navigate('/login'); }}>
+                  Iniciar Sesión
+                </MenuItem>
+                <MenuItem onClick={() => { handleClose(); navigate('/registro'); }}>
+                  Crear Cuenta
+                </MenuItem>
+              </Menu>
+            </>
           )}
 
           <Dialog open={openConfig} onClose={handleCloseConfig}>
@@ -411,6 +449,14 @@ const Navbar: React.FC = () => {
         </MuiAlert>
       </Snackbar>
     </AppBar>
+  );
+};
+
+const Navbar: React.FC = () => {
+  return (
+    <MockAppProvider>
+      <NavbarContent />
+    </MockAppProvider>
   );
 };
 

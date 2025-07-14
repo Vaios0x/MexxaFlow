@@ -83,6 +83,14 @@ const initialUser: MockUser = {
   isLogged: true,
 };
 
+const hackwinnerUser: MockUser = {
+  id: '2',
+  name: 'Hackwinner',
+  email: 'hackwinner@mexxaflow.com',
+  avatar: 'https://i.pravatar.cc/150?img=12',
+  isLogged: true,
+};
+
 const initialNotifications: MockNotification[] = [
   { id: 'n1', type: 'success', message: '¡Pago recibido de Ana!', read: false, date: new Date() },
   { id: 'n2', type: 'info', message: 'Tu balance ha sido actualizado.', read: false, date: new Date() },
@@ -125,7 +133,11 @@ export const MockAppProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguageState] = useState<Language>('es');
 
   // Simular login/logout
-  const login = () => setUser(initialUser);
+  const login = () => {
+    // Determinar qué usuario establecer basado en las credenciales
+    const currentUser = user?.email === 'hackwinner@mexxaflow.com' ? hackwinnerUser : initialUser;
+    setUser(currentUser);
+  };
   const logout = () => setUser(null);
 
   // Notificaciones

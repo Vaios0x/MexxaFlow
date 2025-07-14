@@ -1,24 +1,18 @@
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path';
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
-  // Cargar variables de entorno
-  const env = loadEnv(mode, process.cwd(), '');
-
-  return {
-    plugins: [react()],
-    resolve: {
-      alias: {
-        buffer: 'buffer',
-      },
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      buffer: 'buffer',
     },
-    define: {
-      global: {},
-      'process.env': {
-        VITE_WALLETCONNECT_PROJECT_ID: env.VITE_WALLETCONNECT_PROJECT_ID,
-      },
+  },
+  define: {
+    global: {},
+    'process.env': {
+      VITE_WALLETCONNECT_PROJECT_ID: '',
     },
-  };
-})
+  },
+});

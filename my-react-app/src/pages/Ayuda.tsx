@@ -16,48 +16,106 @@ import {
   Box, 
   Fab, 
   Slide, 
-  Avatar
+  Avatar,
+  Link as MuiLink
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 const preguntasFrecuentes = [
   {
     pregunta: '¿Cómo funciona MexaFlow?',
-    respuesta: 'MexaFlow es una plataforma que permite a trabajadores independientes recibir pagos instantáneos utilizando tecnología blockchain.'
+    respuesta: 'MexaFlow es una plataforma que permite a trabajadores independientes recibir pagos instantáneos utilizando tecnología blockchain.',
+    keywords: ['funcionamiento', 'plataforma', 'blockchain', 'pagos']
   },
   {
     pregunta: '¿Cuáles son los requisitos para usar MexaFlow?',
-    respuesta: 'Necesitas una wallet de MetaMask, ser mayor de edad y tener una cuenta verificada en nuestra plataforma.'
+    respuesta: 'Necesitas una wallet de MetaMask, ser mayor de edad y tener una cuenta verificada en nuestra plataforma.',
+    keywords: ['requisitos', 'wallet', 'metamask', 'cuenta verificada']
   },
   {
     pregunta: '¿Qué tipos de pagos puedo recibir?',
-    respuesta: 'Puedes recibir pagos en criptomonedas estables como USDC, USDT y DAI, así como en monedas locales.'
+    respuesta: 'Puedes recibir pagos en criptomonedas estables como USDC, USDT y DAI, así como en monedas locales.',
+    keywords: ['tipos de pagos', 'criptomonedas', 'usdc', 'usdt', 'dai', 'monedas locales']
   },
   {
     pregunta: '¿Cómo protegen mi información?',
-    respuesta: 'Utilizamos encriptación de última generación y almacenamiento descentralizado para proteger tus datos personales y financieros.'
+    respuesta: 'Utilizamos encriptación de última generación y almacenamiento descentralizado para proteger tus datos personales y financieros.',
+    keywords: ['protección', 'encriptación', 'almacenamiento', 'datos']
   },
   {
     pregunta: '¿Cómo retiro mis fondos a mi cuenta bancaria?',
-    respuesta: 'Puedes retirar tus fondos a una cuenta bancaria mexicana mediante la opción de retiro en el Dashboard. El proceso es rápido y seguro.'
+    respuesta: 'Puedes retirar tus fondos a una cuenta bancaria mexicana mediante la opción de retiro en el Dashboard. El proceso es rápido y seguro.',
+    keywords: ['retiro', 'fondos', 'cuenta bancaria', 'dashboard']
   },
   {
     pregunta: '¿Qué hago si tengo un problema con una transacción?',
-    respuesta: 'Contacta a soporte desde este mismo centro de ayuda o usa el chat en vivo para recibir asistencia inmediata.'
+    respuesta: 'Contacta a soporte desde este mismo centro de ayuda o usa el chat en vivo para recibir asistencia inmediata.',
+    keywords: ['problema', 'transacción', 'soporte', 'chat en vivo']
   }
 ];
 
 const respuestasBot = [
-  { keyword: 'hola', respuesta: '¡Hola! ¿En qué puedo ayudarte hoy?' },
-  { keyword: 'retiro', respuesta: 'Para retirar tus fondos, ve al Dashboard y haz clic en "Retirar MXNB".' },
-  { keyword: 'comisión', respuesta: 'Las comisiones dependen de tu plan. Puedes consultarlas en la sección de Precios.' },
-  { keyword: 'error', respuesta: 'Lamentamos el inconveniente. ¿Podrías describir el error con más detalle?' },
-  { keyword: 'gracias', respuesta: '¡De nada! Si tienes otra duda, aquí estoy.' },
-  { keyword: 'soporte', respuesta: 'Puedes escribir tu problema aquí o usar el formulario de contacto para soporte personalizado.' },
+  { 
+    keywords: ['hola', 'saludos', 'hey', 'hi'], 
+    respuestas: [
+      '¡Hola! ¿En qué puedo ayudarte hoy?', 
+      '¡Buen día! Estoy aquí para ayudarte.', 
+      'Hola, ¿cómo puedo asistirte?'
+    ]
+  },
+  { 
+    keywords: ['retiro', 'retirar', 'dinero', 'fondos'], 
+    respuestas: [
+      'Para retirar tus fondos, ve al Dashboard y haz clic en "Retirar MXNB".', 
+      'Puedes retirar fondos desde tu Dashboard. Sigue estos pasos: 1) Ir a Dashboard 2) Seleccionar "Retirar"'
+    ]
+  },
+  { 
+    keywords: ['comisión', 'precios'], 
+    respuestas: [
+      'Las comisiones dependen de tu plan. Puedes consultarlas en la sección de Precios.',
+      'Para ver las comisiones, ve a la sección de Precios en nuestro sitio.'
+    ]
+  },
+  { 
+    keywords: ['error', 'problema', 'inconveniente'], 
+    respuestas: [
+      'Lamentamos el inconveniente. ¿Podrías describir el error con más detalle?',
+      'Si estás experimentando algún problema, por favor, házmelo saber para poder ayudarte mejor.'
+    ]
+  },
+  { 
+    keywords: ['gracias', 'muy bien', 'excelente'], 
+    respuestas: [
+      '¡De nada! Si tienes otra duda, aquí estoy.',
+      '¡Excelente! Si necesitas algo más, no dudes en preguntar.'
+    ]
+  },
+  { 
+    keywords: ['soporte', 'ayuda', 'problema', 'consulta'], 
+    respuestas: [
+      'Puedes escribir tu problema aquí o usar el formulario de contacto para soporte personalizado.',
+      'Si tienes alguna pregunta o problema, por favor, házmelo saber.'
+    ]
+  }
+];
+
+const recursos = [
+  { 
+    nombre: 'Documentación', 
+    url: 'https://docs.mexxaflow.com', 
+    descripcion: 'Guías detalladas y tutoriales' 
+  },
+  { 
+    nombre: 'Comunidad Discord', 
+    url: 'https://discord.gg/mexxaflow', 
+    descripcion: 'Únete a nuestra comunidad para soporte en tiempo real' 
+  }
 ];
 
 const Ayuda: React.FC = () => {
@@ -65,13 +123,15 @@ const Ayuda: React.FC = () => {
   const [search, setSearch] = useState('');
   const filteredFaq = preguntasFrecuentes.filter(faq =>
     faq.pregunta.toLowerCase().includes(search.toLowerCase()) ||
-    faq.respuesta.toLowerCase().includes(search.toLowerCase())
+    faq.respuesta.toLowerCase().includes(search.toLowerCase()) ||
+    faq.keywords.some(keyword => keyword.toLowerCase().includes(search.toLowerCase()))
   );
 
   // Contact Form
   const [email, setEmail] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [snackbar, setSnackbar] = useState(false);
+  const [archivos, setArchivos] = useState<File[]>([]);
 
   // Chatbot
   const [chatOpen, setChatOpen] = useState(false);
@@ -82,32 +142,62 @@ const Ayuda: React.FC = () => {
   const [typing, setTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSnackbar(true);
-    setEmail('');
-    setMensaje('');
-  };
-
-  // Chatbot logic
+  // Mejora de lógica de chatbot
   const handleSendChat = () => {
     if (!chatInput.trim()) return;
+    
     const userMsg = { from: 'user', text: chatInput };
     setChatMessages(msgs => [...msgs, userMsg]);
     setChatInput('');
     setTyping(true);
+
+    // Simulación de escritura más realista
+    const typingDuration = Math.max(800, chatInput.length * 50);
+    
     setTimeout(() => {
       const lower = userMsg.text.toLowerCase();
-      const found = respuestasBot.find(r => lower.includes(r.keyword));
-      setChatMessages(msgs => [
-        ...msgs,
-        { from: 'bot', text: found ? found.respuesta : '¿Podrías darme más detalles o escribir tu pregunta de otra forma?' }
-      ]);
+      
+      // Búsqueda más avanzada de respuestas
+      const foundResponse = respuestasBot.find(r => 
+        r.keywords.some(keyword => lower.includes(keyword))
+      );
+
+      const botResponse = foundResponse 
+        ? foundResponse.respuestas[Math.floor(Math.random() * foundResponse.respuestas.length)]
+        : '¿Podrías darme más detalles o escribir tu pregunta de otra forma?';
+
+      setChatMessages(msgs => [...msgs, { from: 'bot', text: botResponse }]);
       setTyping(false);
+      
       setTimeout(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
-    }, 1200);
+    }, typingDuration);
+  };
+
+  // Manejo de archivos en formulario de contacto
+  const handleArchivoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const nuevosArchivos = Array.from(e.target.files);
+      setArchivos(prev => [...prev, ...nuevosArchivos]);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Lógica de envío con archivos
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('mensaje', mensaje);
+    archivos.forEach(archivo => {
+      formData.append('archivos', archivo);
+    });
+
+    // Aquí iría la lógica de envío al backend
+    setSnackbar(true);
+    setEmail('');
+    setMensaje('');
+    setArchivos([]);
   };
 
   // Auto-scroll chat
@@ -206,6 +296,10 @@ const Ayuda: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 sx={{ bgcolor: 'white', borderRadius: 1 }}
+                inputProps={{
+                  'aria-label': 'Email de contacto',
+                  'aria-required': 'true'
+                }}
               />
               <TextField
                 fullWidth
@@ -218,7 +312,36 @@ const Ayuda: React.FC = () => {
                 onChange={(e) => setMensaje(e.target.value)}
                 required
                 sx={{ bgcolor: 'white', borderRadius: 1 }}
+                inputProps={{
+                  'aria-label': 'Mensaje de soporte',
+                  'aria-required': 'true'
+                }}
               />
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                <input
+                  accept="image/*,application/pdf,.doc,.docx"
+                  style={{ display: 'none' }}
+                  id="raised-button-file"
+                  multiple
+                  type="file"
+                  onChange={handleArchivoChange}
+                />
+                <label htmlFor="raised-button-file">
+                  <Button 
+                    variant="outlined" 
+                    component="span" 
+                    startIcon={<AttachFileIcon />}
+                    sx={{ mr: 2 }}
+                  >
+                    Adjuntar archivos
+                  </Button>
+                </label>
+                {archivos.length > 0 && (
+                  <Typography variant="body2">
+                    {archivos.length} archivo{archivos.length !== 1 ? 's' : ''} seleccionado{archivos.length !== 1 ? 's' : ''}
+                  </Typography>
+                )}
+              </Box>
               <Button
                 type="submit"
                 variant="contained"
@@ -232,6 +355,44 @@ const Ayuda: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Sección de recursos externos */}
+      <Box sx={{ mt: 4, textAlign: 'center' }}>
+        <Typography variant="h5" gutterBottom>
+          Recursos Adicionales
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+          {recursos.map((recurso, index) => (
+            <MuiLink 
+              key={index} 
+              href={recurso.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              sx={{ 
+                textDecoration: 'none', 
+                color: 'primary.main',
+                '&:hover': { textDecoration: 'underline' }
+              }}
+            >
+              <Paper 
+                elevation={2} 
+                sx={{ 
+                  p: 2, 
+                  textAlign: 'center', 
+                  width: 200,
+                  transition: 'transform 0.3s',
+                  '&:hover': { transform: 'scale(1.05)' }
+                }}
+              >
+                <Typography variant="h6">{recurso.nombre}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {recurso.descripcion}
+                </Typography>
+              </Paper>
+            </MuiLink>
+          ))}
+        </Box>
+      </Box>
 
       {/* Snackbar de mensaje enviado */}
       <Snackbar

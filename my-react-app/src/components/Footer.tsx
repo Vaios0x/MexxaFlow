@@ -6,6 +6,10 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import ChatIcon from '@mui/icons-material/Chat';
 import EmailIcon from '@mui/icons-material/Email';
 import LanguageIcon from '@mui/icons-material/Language';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import TelegramIcon from '@mui/icons-material/Telegram';
 
 const Footer: React.FC = () => (
   <Box sx={{
@@ -27,17 +31,26 @@ const Footer: React.FC = () => (
             Plataforma de pagos instantáneos, seguros y sin fronteras para trabajadores independientes en Latinoamérica.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton color="inherit" size="small" href="https://github.com/Vaios0x/MexxaFlow" target="_blank">
+            <IconButton color="inherit" size="small" href="https://github.com/Vaios0x/MexxaFlow" target="_blank" aria-label="GitHub">
               <GitHubIcon />
             </IconButton>
-            <IconButton color="inherit" size="small" href="https://twitter.com/mexxaflow" target="_blank">
+            <IconButton color="inherit" size="small" href="https://twitter.com/mexxaflow" target="_blank" aria-label="Twitter">
               <TwitterIcon />
             </IconButton>
-            <IconButton color="inherit" size="small" href="https://linkedin.com/company/mexxaflow" target="_blank">
+            <IconButton color="inherit" size="small" href="https://linkedin.com/company/mexxaflow" target="_blank" aria-label="LinkedIn">
               <LinkedInIcon />
             </IconButton>
-            <IconButton color="inherit" size="small" href="https://discord.gg/mexxaflow" target="_blank">
+            <IconButton color="inherit" size="small" href="https://discord.gg/mexxaflow" target="_blank" aria-label="Discord">
               <ChatIcon />
+            </IconButton>
+            <IconButton color="inherit" size="small" href="https://instagram.com/mexxaflow" target="_blank" aria-label="Instagram">
+              <InstagramIcon />
+            </IconButton>
+            <IconButton color="inherit" size="small" href="https://facebook.com/mexxaflow" target="_blank" aria-label="Facebook">
+              <FacebookIcon />
+            </IconButton>
+            <IconButton color="inherit" size="small" href="https://t.me/mexxaflow" target="_blank" aria-label="Telegram">
+              <TelegramIcon />
             </IconButton>
           </Box>
         </Grid>

@@ -7,9 +7,17 @@ import { useState } from 'react';
  * - Transferencias programadas (simuladas)
  * - Integración simulada con Portal (MPC wallets)
  * - Soporte multiusuario (MultiCLABE)
+ * 
+ * TODO: Migrar a conexión con backend real
+ * TODO: Implementar manejo de errores de red
+ * TODO: Añadir interceptores de autenticación
+ * TODO: Configurar variables de entorno para endpoints
  */
 export const useMXNBWallet = () => {
   const { address, isConnected } = useAccount();
+
+  // Obtener la dirección del token para Arbitrum Sepolia
+  const tokenAddress = MXNB_CONFIG.CONTRACTS.ARBITRUM_SEPOLIA.tokenAddress as `0x${string}`;
 
   // --- Simulación: transferencias programadas ---
   const [scheduledTransfers, setScheduledTransfers] = useState<{
@@ -22,6 +30,7 @@ export const useMXNBWallet = () => {
 
   // Agregar transferencia programada
   const scheduleTransfer = (to: string, amount: number, date: Date) => {
+    // TODO: Validar transferencias antes de agregar
     setScheduledTransfers(prev => [
       ...prev,
       {
@@ -36,6 +45,7 @@ export const useMXNBWallet = () => {
 
   // Marcar transferencia como enviada/cancelada
   const updateScheduledTransfer = (id: string, status: 'enviada' | 'cancelada') => {
+    // TODO: Sincronizar estado con backend
     setScheduledTransfers(prev => prev.map(t => t.id === id ? { ...t, status } : t));
   };
 
@@ -45,29 +55,37 @@ export const useMXNBWallet = () => {
 
   // Simular vinculación de wallet Portal
   const linkPortalWallet = (mpcAddress: string) => {
+    // TODO: Implementar validación de wallet
     setPortalLinked(true);
     setPortalWallet(mpcAddress);
   };
+
   // Simular desvinculación
   const unlinkPortalWallet = () => {
+    // TODO: Notificar desvinculación al backend
     setPortalLinked(false);
     setPortalWallet(null);
   };
 
   // --- Simulación: MultiCLABE (multiusuario bancario) ---
   const [clabes, setClabes] = useState<string[]>([]);
+
   // Agregar CLABE
   const addClabe = (clabe: string) => {
+    // TODO: Validar formato de CLABE
+    // TODO: Verificar CLABE con backend
     if (!clabes.includes(clabe)) setClabes(prev => [...prev, clabe]);
   };
+
   // Eliminar CLABE
   const removeClabe = (clabe: string) => {
+    // TODO: Notificar eliminación al backend
     setClabes(prev => prev.filter(c => c !== clabe));
   };
 
-  // --- Lógica original de balance ---
+  // --- Lógica de balance ---
   const { data: balance, isLoading, error, refetch } = useReadContract({
-    address: MXNB_CONFIG.TOKEN_ADDRESS as `0x${string}`,
+    address: tokenAddress,
     abi: MXNB_ABI,
     functionName: 'balanceOf',
     args: [address as `0x${string}`],
@@ -77,7 +95,7 @@ export const useMXNBWallet = () => {
   });
 
   const { data: decimals } = useReadContract({
-    address: MXNB_CONFIG.TOKEN_ADDRESS as `0x${string}`,
+    address: tokenAddress,
     abi: MXNB_ABI,
     functionName: 'decimals',
     query: {
@@ -86,6 +104,7 @@ export const useMXNBWallet = () => {
   });
 
   const getMXNBBalance = async (userAddress?: string) => {
+    // TODO: Añadir fallback a consulta de backend
     if (!userAddress && !address) return 0;
     try {
       const targetAddress = userAddress || address;

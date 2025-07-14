@@ -4,30 +4,41 @@ const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      light: '#4F9AFF',
-      main: '#3B82F6',
-      dark: '#2563EB',
+      light: '#6AB4FF', // Aumentado el brillo para mejor contraste
+      main: '#2C7EF6', // Ajustado para mayor contraste
+      dark: '#1A5AD3', // Oscurecido para mejor legibilidad
       contrastText: '#FFFFFF'
     },
     secondary: {
-      light: '#34D399',
-      main: '#10B981',
-      dark: '#047857',
+      light: '#4AEDC0', // Aumentado el brillo
+      main: '#0FD3A2', // Ajustado para mayor contraste
+      dark: '#047857', // Mantenido, buen contraste
       contrastText: '#FFFFFF'
     },
     background: {
-      default: '#121212',
-      paper: '#1E1E1E'
+      default: '#0A0A0F', // Ligeramente más oscuro para mejor contraste
+      paper: '#161622' // Ajustado para diferenciar de fondo
     },
     text: {
-      primary: '#E0E0E0',
-      secondary: '#A0A0A0'
+      primary: '#F0F0F5', // Ligeramente más claro
+      secondary: '#B0B0C0' // Ajustado para mejor legibilidad
     },
     error: {
-      main: '#EF4444'
+      main: '#FF6B6B', // Más brillante para mayor visibilidad
+      contrastText: '#FFFFFF'
     },
     success: {
-      main: '#22C55E'
+      main: '#4ADE80', // Más brillante
+      contrastText: '#FFFFFF'
+    }
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920
     }
   },
   typography: {
@@ -35,16 +46,28 @@ const theme = createTheme({
     h1: {
       fontSize: '2.5rem',
       fontWeight: 800,
-      lineHeight: 1.2
+      lineHeight: 1.2,
+      '@media (max-width:600px)': {
+        fontSize: '1.8rem',
+        lineHeight: 1.1
+      }
     },
     h2: {
       fontSize: '2rem',
       fontWeight: 700,
-      lineHeight: 1.3
+      lineHeight: 1.3,
+      '@media (max-width:600px)': {
+        fontSize: '1.5rem',
+        lineHeight: 1.2
+      }
     },
     body1: {
       fontSize: '1rem',
-      lineHeight: 1.5
+      lineHeight: 1.5,
+      '@media (max-width:600px)': {
+        fontSize: '0.875rem',
+        lineHeight: 1.4
+      }
     }
   },
   spacing: 8,
