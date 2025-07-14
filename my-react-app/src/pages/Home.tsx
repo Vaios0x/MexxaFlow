@@ -7,10 +7,13 @@ import {
   Box,
   Chip,
   Container,
-  Stack
+  Stack,
+  Grid,
+  Paper
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
+import { motion } from 'framer-motion';
 
 const segments = [
   {
@@ -100,6 +103,93 @@ const testimonials = [
   }
 ];
 
+const HowItWorks: React.FC = () => {
+  const steps = [
+    {
+      title: 'Regístrate',
+      description: 'Crea tu cuenta con wallet Web3 en menos de 2 minutos',
+      icon: '🚀'
+    },
+    {
+      title: 'Conecta tu Wallet',
+      description: 'Vincula MetaMask, WalletConnect o cualquier wallet compatible',
+      icon: '💳'
+    },
+    {
+      title: 'Recibe Pagos',
+      description: 'Acepta pagos instantáneos en MXNB con comisiones mínimas',
+      icon: '💸'
+    },
+    {
+      title: 'Retira o Reinvierte',
+      description: 'Transfiere a tu banco o mantén tu capital en blockchain',
+      icon: '🏦'
+    }
+  ];
+
+  return (
+    <Box 
+      id="como-funciona" 
+      sx={{ 
+        py: 8, 
+        background: 'linear-gradient(135deg, #1E1E1E 0%, #121212 100%)',
+        color: 'white'
+      }}
+    >
+      <Container maxWidth="lg">
+        <Typography 
+          variant="h3" 
+          align="center" 
+          sx={{ 
+            mb: 6, 
+            background: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          Cómo funciona MexxaFlow
+        </Typography>
+        <Grid container spacing={4}>
+          {steps.map((step, index) => (
+            <Grid item xs={12} sm={6} md={3} key={step.title}>
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+              >
+                <Paper 
+                  elevation={3} 
+                  sx={{ 
+                    p: 3, 
+                    textAlign: 'center', 
+                    background: 'rgba(255,255,255,0.05)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: 3,
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Typography variant="h1" sx={{ mb: 2 }}>
+                    {step.icon}
+                  </Typography>
+                  <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
+                    {step.title}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {step.description}
+                  </Typography>
+                </Paper>
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { isConnected } = useAccount();
@@ -112,254 +202,205 @@ const Home: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
-        {/* Hero Section */}
-        <Box
-          sx={{
-            textAlign: 'center',
-            color: 'white',
-            mb: 6,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
         >
-          <Typography
-            variant="h1"
-            sx={{
-              background: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontWeight: 900,
-              mb: 3,
-              fontSize: { xs: '2.5rem', sm: '4rem' }
-            }}
-          >
-            MexxaFlow
-          </Typography>
-
-          <Typography
-            variant="h4"
-            sx={{
-              mb: 4,
-              color: 'text.secondary',
-              maxWidth: 800,
-              fontSize: { xs: '1.2rem', sm: '1.8rem' }
-            }}
-          >
-            Plataforma de pagos instantáneos, seguros y sin fronteras para trabajadores independientes en Latinoamérica.
-          </Typography>
-
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={2}
-            sx={{ mb: 4 }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{
-                fontSize: 18,
-                px: 4,
-                py: 1.5,
-                borderRadius: 3
-              }}
-              onClick={() => navigate('/dashboard')}
-            >
-              COMENZAR AHORA
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              size="large"
-              sx={{
-                fontSize: 18,
-                px: 4,
-                py: 1.5,
-                borderRadius: 3
-              }}
-              onClick={() => {
-                const section = document.getElementById('como-funciona');
-                if (section) section.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              CÓMO FUNCIONA
-            </Button>
-          </Stack>
-
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: 1
-            }}
-          >
-            <Chip
-              label="8 segmentos"
-              color="primary"
-              variant="outlined"
-              sx={{ fontSize: 16, px: 1 }}
-            />
-            <Chip
-              label="0.2% comisión mínima"
-              color="success"
-              variant="outlined"
-              sx={{ fontSize: 16, px: 1 }}
-            />
-            <Chip
-              label="24/7 disponibilidad"
-              color="secondary"
-              variant="outlined"
-              sx={{ fontSize: 16, px: 1 }}
-            />
-          </Stack>
-        </Box>
-
-        {/* Benefits Section */}
-        <Card
-          sx={{
-            background: 'rgba(255,255,255,0.05)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: 3,
-            mb: 4,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
-          }}
-        >
-          <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                gap: 3
-              }}
-            >
-              {benefits.map((b) => (
-                <Box
-                  key={b.text}
-                  sx={{
-                    flex: { xs: '1 1 100%', sm: '1 1 40%', md: '1 1 20%' },
-                    minWidth: 140,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                    color: 'white',
-                    mb: 2
-                  }}
-                >
-                  <Box
-                    sx={{
-                      fontSize: { xs: '2.5rem', sm: '3.5rem' },
-                      mb: 2,
-                      color: `${b.color}.main`
-                    }}
-                  >
-                    {b.emoji}
-                  </Box>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 700,
-                      color: 'text.secondary'
-                    }}
-                  >
-                    {b.text}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </CardContent>
-        </Card>
-
-        {/* Testimonios */}
-        <Box sx={{ mt: 8, mb: 8 }}>
-          <Typography variant="h4" align="center" sx={{ fontWeight: 900, mb: 4, color: 'primary.main' }}>
-            Testimonios de Usuarios
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, justifyContent: 'center', alignItems: 'stretch' }}>
-            {testimonials.map((t) => (
-              <Card key={t.name} sx={{ flex: 1, minWidth: 260, maxWidth: 340, borderRadius: 4, boxShadow: '0 4px 24px rgba(0,0,0,0.12)', background: 'linear-gradient(135deg, #23272F 60%, #1A1D23 100%)', color: 'white', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <Box sx={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', mb: 2, border: '3px solid #3B82F6' }}>
-                  <img src={t.avatar} alt={t.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </Box>
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{t.name}</Typography>
-                <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 600, mb: 2 }}>{t.segment}</Typography>
-                <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: 17, textAlign: 'center', mb: 1 }}>
-                  “{t.text}”
-                </Typography>
-              </Card>
-            ))}
-          </Box>
-        </Box>
-
-        {/* Sección Cómo Funciona */}
-        <section id="como-funciona" style={{ marginTop: 80, marginBottom: 80 }}>
           <Box
             sx={{
-              maxWidth: 600,
-              mx: 'auto',
-              borderRadius: 4,
-              background: 'rgba(30,34,40,0.85)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-              backdropFilter: 'blur(12px)',
-              p: { xs: 3, sm: 6 },
+              textAlign: 'center',
+              color: 'white',
+              mb: 6,
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
-              position: 'relative',
-              overflow: 'hidden'
+              alignItems: 'center'
             }}
           >
-            <Box sx={{ fontSize: 64, mb: 2, color: 'primary.main', animation: 'bounce 1.5s infinite alternate' }}>⚡</Box>
             <Typography
-              variant="h4"
+              variant="h1"
               sx={{
-                mb: 3,
-                fontWeight: 900,
                 background: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                textAlign: 'center',
-                fontSize: { xs: '2rem', sm: '2.5rem' }
+                fontWeight: 900,
+                mb: 3,
+                fontSize: { xs: '2.5rem', sm: '4rem' }
               }}
             >
-              ¿Cómo funciona MexxaFlow?
+              MexxaFlow
             </Typography>
-            <Box sx={{ width: '100%', mt: 2 }}>
-              {[
-                { icon: '🔗', text: 'Conecta tu wallet y recibe MXNB.' },
-                { icon: '💸', text: 'Envía y recibe pagos instantáneos en la red Arbitrum Sepolia.' },
-                { icon: '👀', text: 'Visualiza tu balance y movimientos en tiempo real.' },
-                { icon: '🛡️', text: 'Disfruta de comisiones mínimas y máxima seguridad.' }
-              ].map((step, idx, arr) => (
-                <Box key={idx} sx={{ display: 'flex', alignItems: 'flex-start', mb: idx < arr.length - 1 ? 3 : 0 }}>
-                  <Box sx={{
-                    minWidth: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #3B82F6 60%, #10B981 100%)',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 24,
-                    fontWeight: 'bold',
-                    boxShadow: '0 2px 8px rgba(59,130,246,0.15)',
-                    mr: 2,
-                    mt: 0.5
-                  }}>{step.icon}</Box>
-                  <Typography sx={{ color: 'white', fontSize: 20, lineHeight: 1.5 }}>{step.text}</Typography>
-                </Box>
+
+            <Typography
+              variant="h4"
+              sx={{
+                mb: 4,
+                color: 'text.secondary',
+                maxWidth: 800,
+                fontSize: { xs: '1.2rem', sm: '1.8rem' }
+              }}
+            >
+              Plataforma de pagos instantáneos, seguros y sin fronteras para trabajadores independientes en Latinoamérica.
+            </Typography>
+
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={2}
+              sx={{ mb: 4 }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                sx={{
+                  fontSize: 18,
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 3
+                }}
+                onClick={() => navigate('/dashboard')}
+              >
+                COMENZAR AHORA
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="large"
+                sx={{
+                  fontSize: 18,
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 3
+                }}
+                onClick={() => {
+                  const section = document.getElementById('como-funciona');
+                  if (section) section.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                CÓMO FUNCIONA
+              </Button>
+            </Stack>
+
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: 1
+              }}
+            >
+              <Chip
+                label="8 segmentos"
+                color="primary"
+                variant="outlined"
+                sx={{ fontSize: 16, px: 1 }}
+              />
+              <Chip
+                label="0.2% comisión mínima"
+                color="success"
+                variant="outlined"
+                sx={{ fontSize: 16, px: 1 }}
+              />
+              <Chip
+                label="24/7 disponibilidad"
+                color="secondary"
+                variant="outlined"
+                sx={{ fontSize: 16, px: 1 }}
+              />
+            </Stack>
+          </Box>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <Card
+            sx={{
+              background: 'rgba(255,255,255,0.05)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: 3,
+              mb: 4,
+              boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+            }}
+          >
+            <CardContent>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  gap: 3
+                }}
+              >
+                {benefits.map((b) => (
+                  <Box
+                    key={b.text}
+                    sx={{
+                      flex: { xs: '1 1 100%', sm: '1 1 40%', md: '1 1 20%' },
+                      minWidth: 140,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                      color: 'white',
+                      mb: 2
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        fontSize: { xs: '2.5rem', sm: '3.5rem' },
+                        mb: 2,
+                        color: `${b.color}.main`
+                      }}
+                    >
+                      {b.emoji}
+                    </Box>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 700,
+                        color: 'text.secondary'
+                      }}
+                    >
+                      {b.text}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <HowItWorks />
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <Box sx={{ mt: 8, mb: 8 }}>
+            <Typography variant="h4" align="center" sx={{ fontWeight: 900, mb: 4, color: 'primary.main' }}>
+              Testimonios de Usuarios
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, justifyContent: 'center', alignItems: 'stretch' }}>
+              {testimonials.map((t) => (
+                <Card key={t.name} sx={{ flex: 1, minWidth: 260, maxWidth: 340, borderRadius: 4, boxShadow: '0 4px 24px rgba(0,0,0,0.12)', background: 'linear-gradient(135deg, #23272F 60%, #1A1D23 100%)', color: 'white', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <Box sx={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', mb: 2, border: '3px solid #3B82F6' }}>
+                    <img src={t.avatar} alt={t.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{t.name}</Typography>
+                  <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 600, mb: 2 }}>{t.segment}</Typography>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: 17, textAlign: 'center', mb: 1 }}>
+                    "{t.text}"
+                  </Typography>
+                </Card>
               ))}
             </Box>
-            <Typography sx={{ color: 'rgba(255,255,255,0.8)', mt: 4, fontSize: 18, textAlign: 'center' }}>
-              ¡Así de fácil es usar MexxaFlow!
-            </Typography>
           </Box>
-        </section>
+        </motion.div>
 
         {/* Segments Section */}
         <Box sx={{ mt: 8, mb: 4 }}>
