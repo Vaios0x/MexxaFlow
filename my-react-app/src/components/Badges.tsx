@@ -1,56 +1,55 @@
 import React from 'react';
 
-const badgeStyles = {
-  active: 'bg-green-500 text-white',
-  inactive: 'bg-gray-300 text-gray-600',
-};
-
 const badges = [
   { 
     name: 'Primer Pago', 
     icon: '🎉', 
+    status: 'Desbloqueado',
     active: true 
   },
   { 
     name: 'Pagador Frecuente', 
     icon: '🚀', 
+    status: '',
     active: false 
   },
   { 
     name: 'Receptor Activo', 
     icon: '💸', 
+    status: '',
     active: false 
   },
   { 
     name: 'Balance Superior', 
     icon: '🏆', 
+    status: 'Desbloqueado',
     active: true 
   }
 ];
 
 const Badges: React.FC = () => {
   return (
-    <div className="space-y-4 p-4">
+    <div className="bg-black text-white p-4 rounded-lg">
       <h2 className="text-xl font-bold mb-4">Logros y Badges</h2>
-      {badges.map((badge, index) => (
-        <div 
-          key={index} 
-          className={`
-            flex items-center justify-between 
-            p-4 rounded-lg 
-            transition-all duration-300 
-            ${badge.active ? badgeStyles.active : badgeStyles.inactive}
-          `}
-        >
-          <div className="flex items-center space-x-4">
-            <span className="text-2xl">{badge.icon}</span>
-            <span className="font-semibold">{badge.name}</span>
+      <div className="space-y-4">
+        {badges.map((badge, index) => (
+          <div 
+            key={index} 
+            className={`
+              flex items-center 
+              ${badge.active ? 'opacity-100' : 'opacity-50'}
+            `}
+          >
+            <span className="text-2xl mr-4">{badge.icon}</span>
+            <div className="flex-grow">
+              <div className="font-semibold">{badge.name}</div>
+              {badge.status && (
+                <div className="text-sm text-gray-400">{badge.status}</div>
+              )}
+            </div>
           </div>
-          {badge.active && (
-            <span className="text-sm">Desbloqueado</span>
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
