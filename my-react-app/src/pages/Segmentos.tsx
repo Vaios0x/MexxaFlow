@@ -12,7 +12,8 @@ import {
   Button,
   IconButton,
   CardContent,
-  Slide
+  Slide,
+  Stack
 } from '@mui/material';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -287,11 +288,12 @@ const Segmentos: React.FC = () => {
       <Typography align="center" sx={{ mb: 6, color: 'primary.main', fontWeight: 700, fontSize: 18 }}>
         ¡Personaliza tu experiencia según tu segmento!
       </Typography>
+      {/* Cards de segmentos - hacer responsive */}
       <Box
         sx={{
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
-          gap: 4,
+          gap: { xs: 3, md: 4 },
           justifyContent: 'center',
         }}
       >
@@ -300,15 +302,16 @@ const Segmentos: React.FC = () => {
             <Card
               sx={{
                 position: 'relative',
-                p: 4,
+                p: { xs: 3, md: 4 },
                 borderRadius: 4,
                 boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
                 background: 'linear-gradient(135deg, #23272F 60%, #1A1D23 100%)',
                 color: 'white',
-                minHeight: 260,
+                minHeight: { xs: 240, md: 260 },
                 transition: 'transform 0.2s, box-shadow 0.2s',
                 cursor: 'pointer',
                 overflow: 'visible',
+                width: '100%',
                 '&:hover': {
                   transform: 'scale(1.04)',
                   boxShadow: '0 8px 32px 0 #3B82F6',
@@ -324,70 +327,66 @@ const Segmentos: React.FC = () => {
                 if (btn) btn.style.opacity = '0';
               }}
             >
-              <Box sx={{ position: 'absolute', top: 24, right: 24, zIndex: 2 }}>
+              <Box sx={{ position: 'absolute', top: { xs: 16, md: 24 }, right: { xs: 16, md: 24 }, zIndex: 2 }}>
                 <Chip
                   label={segmento.comision}
                   color={segmento.color}
                   sx={{
                     fontWeight: 'bold',
-                    fontSize: 16,
-                    px: 2,
+                    fontSize: { xs: 14, md: 16 },
+                    px: { xs: 1.5, md: 2 },
                     py: 0.5,
                     borderRadius: 2,
                     boxShadow: '0 2px 8px rgba(59,130,246,0.15)'
                   }}
                 />
               </Box>
-              <Box sx={{ fontSize: 56, mb: 2, textAlign: 'center' }}>{segmento.emoji}</Box>
-              <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, textAlign: 'center' }}>
+              <Box sx={{ fontSize: { xs: 48, md: 56 }, mb: 2, textAlign: 'center' }}>{segmento.emoji}</Box>
+              <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, textAlign: 'center', fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
                 {segmento.titulo}
               </Typography>
-              <Typography sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', fontSize: 18 }}>
+              <Typography sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', fontSize: { xs: 16, md: 18 } }}>
                 {segmento.descripcion}
               </Typography>
-              <Box
-                className="simular-btn"
-                sx={{
-                  opacity: 0,
-                  transition: 'opacity 0.2s',
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  bottom: 24,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  pointerEvents: 'none',
-                  zIndex: 3
-                }}
-              >
-                <Box
+              <Box sx={{ 
+                position: 'absolute', 
+                bottom: { xs: 16, md: 24 }, 
+                left: '50%', 
+                transform: 'translateX(-50%)',
+                opacity: 0,
+                transition: 'opacity 0.3s ease',
+                width: '100%',
+                px: { xs: 2, md: 3 }
+              }} className="simular-btn">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
                   sx={{
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    px: 3,
-                    py: 1,
                     borderRadius: 2,
                     fontWeight: 700,
-                    fontSize: 16,
-                    boxShadow: '0 2px 8px rgba(59,130,246,0.15)',
-                    pointerEvents: 'auto',
+                    py: { xs: 1, md: 1.5 },
+                    fontSize: { xs: '0.875rem', md: '1rem' }
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // handleSimularClick(segmento); // This function is not defined in the original file
                   }}
                 >
-                  Simular flujo
-                </Box>
+                  Simular Comisión
+                </Button>
               </Box>
             </Card>
           </Box>
         ))}
       </Box>
-      {/* Diálogo de detalles */}
+      {/* Diálogo de detalles - hacer fullscreen en mobile */}
       <AnimatePresence>
         {selectedSegmento && (
           <Dialog
             open={!!selectedSegmento}
             onClose={handleCloseDetails}
-            maxWidth="md"
-            fullWidth
+            fullScreen={{ xs: true, sm: false }}
             TransitionComponent={Slide}
             TransitionProps={{
               direction: 'up'
@@ -397,30 +396,43 @@ const Segmentos: React.FC = () => {
               initial: { opacity: 0, scale: 0.9 },
               animate: { opacity: 1, scale: 1 },
               exit: { opacity: 0, scale: 0.9 },
-              transition: { duration: 0.3 }
+              transition: { duration: 0.3 },
+              sx: {
+                borderRadius: { xs: 0, sm: 3 },
+                background: 'linear-gradient(135deg, #1E1E1E 0%, #121212 100%)',
+                color: 'white',
+                width: { xs: '100%', sm: 'auto' },
+                maxWidth: { xs: '100%', sm: 800 }
+              }
             }}
           >
-            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: 800 }}>
+            <DialogTitle sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              fontSize: { xs: '1.5rem', md: '1.25rem' }
+            }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, gap: { xs: 1, sm: 2 } }}>
+                <Typography variant="h5" sx={{ fontWeight: 800, fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
                   {selectedSegmento.emoji} {selectedSegmento.titulo}
                 </Typography>
                 <Chip 
                   label={`Comisión: ${selectedSegmento.comision}`} 
                   color={selectedSegmento.color} 
-                  size="small" 
+                  size="small"
+                  sx={{ fontSize: { xs: '0.875rem', md: '0.875rem' } }} // Cambiado de 0.75rem a 0.875rem en mobile
                 />
               </Box>
-              <IconButton onClick={handleShareSegmento}>
+              <IconButton onClick={handleShareSegmento} sx={{ fontSize: { xs: '1.5rem', md: '1.25rem' } }}>
                 <ShareIcon />
               </IconButton>
             </DialogTitle>
-            <DialogContent>
-              <Typography variant="body1" sx={{ mb: 3 }}>
+            <DialogContent sx={{ p: { xs: 3, md: 2 } }}>
+              <Typography variant="body1" sx={{ mb: 3, fontSize: { xs: '1rem', md: '1rem' } }}>
                 {selectedSegmento.descripcion}
               </Typography>
               
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, fontSize: { xs: '1.125rem', md: '1.25rem' } }}>
                 Beneficios
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
@@ -429,38 +441,110 @@ const Segmentos: React.FC = () => {
                     key={beneficio} 
                     label={beneficio} 
                     variant="outlined" 
-                    color={selectedSegmento.color} 
+                    color={selectedSegmento.color}
+                    sx={{ fontSize: { xs: '0.875rem', md: '0.875rem' } }}
                   />
                 ))}
               </Box>
 
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, fontSize: { xs: '1.125rem', md: '1.25rem' } }}>
                 Ejemplo de Flujo de Trabajo
               </Typography>
-              <Card variant="outlined" sx={{ mb: 3 }}>
+              {/* Timeline de flujo de trabajo - convertir a cards en mobile */}
+              <Card variant="outlined" sx={{ mb: 3, background: 'rgba(255,255,255,0.05)' }}>
                 <CardContent>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, fontSize: { xs: '1rem', md: '1.125rem' } }}>
                     {selectedSegmento.ejemploFlujo.titulo}
                   </Typography>
-                  <Timeline>
-                    {selectedSegmento.ejemploFlujo.pasos.map((paso, index) => (
-                      <TimelineItem key={paso}>
-                        <TimelineSeparator>
-                          <TimelineDot color={selectedSegmento.color} />
-                          {index < selectedSegmento.ejemploFlujo.pasos.length - 1 && <TimelineConnector />}
-                        </TimelineSeparator>
-                        <TimelineContent>{paso}</TimelineContent>
-                      </TimelineItem>
-                    ))}
-                  </Timeline>
-                  <Typography variant="caption" color="text.secondary" sx={{ mt: 2 }}>
+                  
+                  {/* Vista de Timeline para desktop */}
+                  <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                    <Timeline>
+                      {selectedSegmento.ejemploFlujo.pasos.map((paso, index) => (
+                        <TimelineItem key={paso}>
+                          <TimelineSeparator>
+                            <TimelineDot color={selectedSegmento.color} />
+                            {index < selectedSegmento.ejemploFlujo.pasos.length - 1 && <TimelineConnector />}
+                          </TimelineSeparator>
+                          <TimelineContent sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>{paso}</TimelineContent>
+                        </TimelineItem>
+                      ))}
+                    </Timeline>
+                  </Box>
+
+                  {/* Vista de cards para mobile */}
+                  <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                    <Stack spacing={2}>
+                      {selectedSegmento.ejemploFlujo.pasos.map((paso, index) => (
+                        <Card
+                          key={paso}
+                          sx={{
+                            borderRadius: 2,
+                            background: 'linear-gradient(135deg, #23272F 0%, #1A1D23 100%)',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            p: 2,
+                            position: 'relative'
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                            <Box
+                              sx={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: '50%',
+                                background: `linear-gradient(135deg, ${selectedSegmento.color === 'primary' ? '#3B82F6' : 
+                                  selectedSegmento.color === 'success' ? '#10B981' : 
+                                  selectedSegmento.color === 'secondary' ? '#8B5CF6' : 
+                                  selectedSegmento.color === 'info' ? '#06B6D4' : 
+                                  selectedSegmento.color === 'warning' ? '#F59E0B' : '#EF4444'} 0%, 
+                                  ${selectedSegmento.color === 'primary' ? '#1D4ED8' : 
+                                  selectedSegmento.color === 'success' ? '#059669' : 
+                                  selectedSegmento.color === 'secondary' ? '#7C3AED' : 
+                                  selectedSegmento.color === 'info' ? '#0891B2' : 
+                                  selectedSegmento.color === 'warning' ? '#D97706' : '#DC2626'} 100%)`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                mt: 0.5
+                              }}
+                            >
+                              <Typography variant="body2" sx={{ 
+                                fontWeight: 700, 
+                                color: 'white',
+                                fontSize: '0.875rem'
+                              }}>
+                                {index + 1}
+                              </Typography>
+                            </Box>
+                            <Typography variant="body1" sx={{ 
+                              color: 'white',
+                              fontSize: '1rem',
+                              lineHeight: 1.5
+                            }}>
+                              {paso}
+                            </Typography>
+                          </Box>
+                        </Card>
+                      ))}
+                    </Stack>
+                  </Box>
+                  
+                  <Typography variant="caption" color="text.secondary" sx={{ mt: 2, fontSize: { xs: '0.875rem', md: '0.75rem' } }}>
                     Tiempo estimado: {selectedSegmento.ejemploFlujo.tiempoEstimado}
                   </Typography>
                 </CardContent>
               </Card>
             </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDetails} color="primary">
+            <DialogActions sx={{ p: { xs: 3, md: 2 } }}>
+              <Button 
+                onClick={handleCloseDetails} 
+                color="primary"
+                sx={{ 
+                  fontSize: { xs: '1rem', md: '0.875rem' },
+                  minHeight: { xs: 48, md: 40 }
+                }}
+              >
                 Cerrar
               </Button>
             </DialogActions>

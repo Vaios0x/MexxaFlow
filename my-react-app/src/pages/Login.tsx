@@ -139,10 +139,11 @@ const Login: React.FC = () => {
         </Alert>
       </Snackbar>
 
+      {/* Formulario de Login - hacer responsive */}
       <Paper 
         elevation={6} 
         sx={{ 
-          padding: 4, 
+          padding: { xs: 3, md: 4 }, 
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center',
@@ -156,7 +157,8 @@ const Login: React.FC = () => {
           sx={{ 
             mb: 3, 
             fontWeight: 'bold', 
-            color: 'primary.main' 
+            color: 'primary.main',
+            fontSize: { xs: '1.75rem', md: '2.125rem' }
           }}
         >
           MexxaFlow
@@ -176,6 +178,16 @@ const Login: React.FC = () => {
           onChange={handleEmailChange}
           error={!!emailError}
           helperText={emailError}
+          sx={{
+            '& .MuiInputBase-root': {
+              minHeight: { xs: 56, md: 48 },
+              fontSize: { xs: '1rem', md: '1rem' }
+            },
+            '& .MuiInputLabel-root': {
+              fontSize: { xs: '1rem', md: '1rem' }
+            },
+            mb: { xs: 2, md: 1 }
+          }}
         />
 
         <TextField
@@ -192,6 +204,16 @@ const Login: React.FC = () => {
           onChange={handlePasswordChange}
           error={!!passwordError}
           helperText={passwordError}
+          sx={{
+            '& .MuiInputBase-root': {
+              minHeight: { xs: 56, md: 48 },
+              fontSize: { xs: '1rem', md: '1rem' }
+            },
+            '& .MuiInputLabel-root': {
+              fontSize: { xs: '1rem', md: '1rem' }
+            },
+            mb: { xs: 2, md: 1 }
+          }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -199,6 +221,7 @@ const Login: React.FC = () => {
                   aria-label="toggle password visibility"
                   onClick={() => setShowPassword(!showPassword)}
                   edge="end"
+                  sx={{ fontSize: { xs: '1.25rem', md: '1.25rem' } }}
                 >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
@@ -213,10 +236,12 @@ const Login: React.FC = () => {
           variant="contained"
           color="primary"
           sx={{ 
-            mt: 3, 
-            mb: 2,
-            py: 1.5,
-            fontWeight: 'bold'
+            mt: { xs: 3, md: 3 }, 
+            mb: { xs: 3, md: 2 },
+            py: { xs: 2, md: 1.5 },
+            fontWeight: 'bold',
+            fontSize: { xs: '1.125rem', md: '1rem' },
+            minHeight: { xs: 56, md: 48 }
           }}
           onClick={handleLogin}
           disabled={!email || !password || !!emailError || !!passwordError}
@@ -228,7 +253,7 @@ const Login: React.FC = () => {
           variant="body2" 
           color="textSecondary" 
           align="center" 
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, fontSize: { xs: '1rem', md: '0.875rem' } }}
         >
           O continúa con
         </Typography>
@@ -236,15 +261,24 @@ const Login: React.FC = () => {
         <Box 
           sx={{ 
             display: 'flex', 
+            flexDirection: { xs: 'column', md: 'row' },
             justifyContent: 'space-between', 
-            width: '100%' 
+            width: '100%',
+            gap: { xs: 2, md: 1 }
           }}
         >
           <Button
             variant="outlined"
             color="secondary"
             startIcon={<Google />}
-            sx={{ flex: 1, mr: 1 }}
+            sx={{ 
+              flex: 1, 
+              mr: { xs: 0, md: 1 },
+              mb: { xs: 1, md: 0 },
+              py: { xs: 1.5, md: 1 },
+              fontSize: { xs: '1rem', md: '0.875rem' },
+              minHeight: { xs: 48, md: 40 }
+            }}
             onClick={() => handleSocialLogin('Google')}
           >
             Google
@@ -253,7 +287,14 @@ const Login: React.FC = () => {
             variant="outlined"
             color="secondary"
             startIcon={<Facebook />}
-            sx={{ flex: 1, mr: 1 }}
+            sx={{ 
+              flex: 1, 
+              mr: { xs: 0, md: 1 },
+              mb: { xs: 1, md: 0 },
+              py: { xs: 1.5, md: 1 },
+              fontSize: { xs: '1rem', md: '0.875rem' },
+              minHeight: { xs: 48, md: 40 }
+            }}
             onClick={() => handleSocialLogin('Facebook')}
           >
             Facebook
@@ -262,15 +303,20 @@ const Login: React.FC = () => {
             variant="outlined"
             color="secondary"
             startIcon={<Apple />}
-            sx={{ flex: 1 }}
+            sx={{ 
+              flex: 1,
+              py: { xs: 1.5, md: 1 },
+              fontSize: { xs: '1rem', md: '0.875rem' },
+              minHeight: { xs: 48, md: 40 }
+            }}
             onClick={() => handleSocialLogin('Apple')}
           >
             Apple
           </Button>
         </Box>
 
-        <Divider sx={{ width: '100%', my: 3 }}>
-          <Typography variant="body2" color="textSecondary">
+        <Divider sx={{ width: '100%', my: { xs: 3, md: 3 } }}>
+          <Typography variant="body2" color="textSecondary" sx={{ fontSize: { xs: '1rem', md: '0.875rem' } }}>
             ¿Primera vez?
           </Typography>
         </Divider>
@@ -280,6 +326,11 @@ const Login: React.FC = () => {
           variant="outlined"
           color="primary"
           onClick={() => navigate('/registro')}
+          sx={{
+            py: { xs: 1.5, md: 1.5 },
+            fontSize: { xs: '1rem', md: '1rem' },
+            minHeight: { xs: 48, md: 40 }
+          }}
         >
           Crear Cuenta
         </Button>

@@ -18,8 +18,13 @@ const App: React.FC = () => {
         <main 
           id="main-content" 
           tabIndex={-1} 
-          className="flex-grow p-4"
+          className="flex-grow"
           aria-label="Contenido principal"
+          style={{
+            padding: 'clamp(1rem, 4vw, 2rem)',
+            paddingTop: 'clamp(1.5rem, 5vw, 3rem)',
+            paddingBottom: 'clamp(1.5rem, 5vw, 3rem)'
+          }}
         >
           <Outlet />
         </main>

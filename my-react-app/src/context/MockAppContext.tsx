@@ -77,8 +77,8 @@ const MockAppContext = createContext<MockAppContextType | undefined>(undefined);
 // Datos iniciales simulados
 const initialUser: MockUser = {
   id: '1',
-  name: 'Juan Demo',
-  email: 'juan@demo.com',
+  name: 'Vaios0x Demo',
+  email: 'vaios@demo.com',
   avatar: 'https://i.pravatar.cc/150?img=3',
   isLogged: true,
 };
@@ -103,8 +103,8 @@ const initialBalance: MockTokenBalance[] = [
 ];
 
 const initialTransactions: MockTransaction[] = [
-  { id: 't1', type: 'received', amount: 1200, token: 'MXNB', to: 'Juan Demo', from: 'Ana López', date: new Date(), status: 'completed' },
-  { id: 't2', type: 'sent', amount: 500, token: 'MXNB', to: 'Carlos Ruiz', from: 'Juan Demo', date: new Date(), status: 'completed' },
+  { id: 't1', type: 'received', amount: 1200, token: 'MXNB', to: 'Vaios0x Demo', from: 'Ana López', date: new Date(), status: 'completed' },
+  { id: 't2', type: 'sent', amount: 500, token: 'MXNB', to: 'Carlos Ruiz', from: 'Vaios0x Demo', date: new Date(), status: 'completed' },
 ];
 
 const initialStats: MockStats = {

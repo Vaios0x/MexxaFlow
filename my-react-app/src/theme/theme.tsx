@@ -61,12 +61,73 @@ const theme = createTheme({
         lineHeight: 1.2
       }
     },
+    h3: {
+      fontSize: '1.75rem',
+      fontWeight: 700,
+      lineHeight: 1.3,
+      '@media (max-width:600px)': {
+        fontSize: '1.25rem',
+        lineHeight: 1.2
+      }
+    },
+    h4: {
+      fontSize: '1.5rem',
+      fontWeight: 600,
+      lineHeight: 1.4,
+      '@media (max-width:600px)': {
+        fontSize: '1.125rem',
+        lineHeight: 1.3
+      }
+    },
+    h5: {
+      fontSize: '1.25rem',
+      fontWeight: 600,
+      lineHeight: 1.4,
+      '@media (max-width:600px)': {
+        fontSize: '1rem',
+        lineHeight: 1.3
+      }
+    },
+    h6: {
+      fontSize: '1.125rem',
+      fontWeight: 600,
+      lineHeight: 1.4,
+      '@media (max-width:600px)': {
+        fontSize: '1rem',
+        lineHeight: 1.3
+      }
+    },
     body1: {
       fontSize: '1rem',
       lineHeight: 1.5,
       '@media (max-width:600px)': {
-        fontSize: '0.875rem',
+        fontSize: '1rem', // Cambiado de 0.875rem a 1rem (16px)
         lineHeight: 1.4
+      }
+    },
+    body2: {
+      fontSize: '0.875rem',
+      lineHeight: 1.5,
+      '@media (max-width:600px)': {
+        fontSize: '1rem', // Cambiado de 0.75rem a 1rem (16px)
+        lineHeight: 1.4
+      }
+    },
+    caption: {
+      fontSize: '0.75rem',
+      lineHeight: 1.4,
+      '@media (max-width:600px)': {
+        fontSize: '0.875rem', // Cambiado de 0.625rem a 0.875rem (14px)
+        lineHeight: 1.3
+      }
+    },
+    button: {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+      lineHeight: 1.4,
+      '@media (max-width:600px)': {
+        fontSize: '1rem', // Cambiado de 0.75rem a 1rem (16px)
+        lineHeight: 1.3
       }
     }
   },
@@ -79,19 +140,33 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
-          padding: '12px 24px',
-          borderRadius: 12
+          borderRadius: 8,
+          fontWeight: 600,
+          '@media (max-width:600px)': {
+            fontSize: '1rem' // Asegurar mínimo 16px en mobile
+          }
         }
       }
     },
-    MuiCard: {
+    MuiTextField: {
       styleOverrides: {
         root: {
-          borderRadius: 16,
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-          transition: 'transform 0.3s ease-in-out',
-          '&:hover': {
-            transform: 'scale(1.02)'
+          '@media (max-width:600px)': {
+            '& .MuiInputBase-input': {
+              fontSize: '1rem' // Asegurar mínimo 16px en mobile
+            },
+            '& .MuiInputLabel-root': {
+              fontSize: '1rem' // Asegurar mínimo 16px en mobile
+            }
+          }
+        }
+      }
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          '@media (max-width:600px)': {
+            fontSize: '0.875rem' // Mínimo 14px para chips
           }
         }
       }
@@ -99,4 +174,4 @@ const theme = createTheme({
   }
 });
 
-export default theme; 
+export default theme;

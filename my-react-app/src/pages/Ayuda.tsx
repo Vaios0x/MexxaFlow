@@ -219,19 +219,50 @@ const Ayuda: React.FC = () => {
 
       <Grid container spacing={4}>
         <Grid item xs={12} md={7}>
+          {/* Campo de búsqueda - hacer responsive */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <SearchIcon sx={{ color: 'primary.main', mr: 1 }} />
+            <SearchIcon sx={{ color: 'primary.main', mr: 1, fontSize: { xs: '1.5rem', md: '1.25rem' } }} />
             <TextField
               placeholder="Buscar en preguntas frecuentes..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               size="small"
               fullWidth
-              sx={{ bgcolor: 'white', borderRadius: 2 }}
+              sx={{ 
+                bgcolor: 'rgba(255,255,255,0.1)',
+                borderRadius: 2,
+                '& .MuiInputBase-root': {
+                  minHeight: { xs: 56, md: 40 },
+                  fontSize: { xs: '1rem', md: '0.875rem' },
+                  color: 'white'
+                },
+                '& .MuiInputBase-input': {
+                  color: 'white',
+                  '&::placeholder': {
+                    color: 'rgba(255,255,255,0.7)',
+                    opacity: 1
+                  }
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'rgba(255,255,255,0.3)'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(255,255,255,0.5)'
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'rgba(255,255,255,0.8)'
+                  }
+                }
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setSearch('')} size="small">
+                    <IconButton 
+                      onClick={() => setSearch('')} 
+                      size="small"
+                      sx={{ fontSize: { xs: '1.25rem', md: '1.25rem' } }}
+                    >
                       <CloseIcon fontSize="small" />
                     </IconButton>
                   </InputAdornment>
@@ -274,7 +305,7 @@ const Ayuda: React.FC = () => {
             sx={{ 
               p: 3, 
               borderRadius: 2,
-              background: 'linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%)',
+              background: 'linear-gradient(135deg, #23272F 0%, #1A1D23 100%)',
               boxShadow: '0 4px 24px rgba(59,130,246,0.10)'
             }}
           >
@@ -282,7 +313,7 @@ const Ayuda: React.FC = () => {
               variant="h5" 
               component="h3" 
               gutterBottom
-              sx={{ fontWeight: 700 }}
+              sx={{ fontWeight: 700, color: 'white' }}
             >
               Contacta Soporte
             </Typography>
@@ -295,7 +326,20 @@ const Ayuda: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                sx={{ bgcolor: 'white', borderRadius: 1 }}
+                sx={{ 
+                  bgcolor: 'rgba(255,255,255,0.05)', 
+                  borderRadius: 2,
+                  '& .MuiInputBase-root': {
+                    minHeight: { xs: 56, md: 48 },
+                    fontSize: { xs: '1rem', md: '1rem' },
+                    color: 'white'
+                  },
+                  '& .MuiInputLabel-root': {
+                    fontSize: { xs: '1rem', md: '1rem' },
+                    color: 'rgba(255,255,255,0.7)'
+                  },
+                  mb: { xs: 2, md: 1 }
+                }}
                 inputProps={{
                   'aria-label': 'Email de contacto',
                   'aria-required': 'true'
@@ -311,13 +355,25 @@ const Ayuda: React.FC = () => {
                 value={mensaje}
                 onChange={(e) => setMensaje(e.target.value)}
                 required
-                sx={{ bgcolor: 'white', borderRadius: 1 }}
+                sx={{ 
+                  bgcolor: 'rgba(255,255,255,0.05)', 
+                  borderRadius: 2,
+                  '& .MuiInputBase-root': {
+                    fontSize: { xs: '1rem', md: '1rem' },
+                    color: 'white'
+                  },
+                  '& .MuiInputLabel-root': {
+                    fontSize: { xs: '1rem', md: '1rem' },
+                    color: 'rgba(255,255,255,0.7)'
+                  },
+                  mb: { xs: 2, md: 1 }
+                }}
                 inputProps={{
                   'aria-label': 'Mensaje de soporte',
                   'aria-required': 'true'
                 }}
               />
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'stretch', md: 'center' }, mt: 2, gap: { xs: 2, md: 2 } }}>
                 <input
                   accept="image/*,application/pdf,.doc,.docx"
                   style={{ display: 'none' }}
@@ -326,18 +382,24 @@ const Ayuda: React.FC = () => {
                   type="file"
                   onChange={handleArchivoChange}
                 />
-                <label htmlFor="raised-button-file">
+                <label htmlFor="raised-button-file" style={{ width: '100%' }}>
                   <Button 
                     variant="outlined" 
                     component="span" 
                     startIcon={<AttachFileIcon />}
-                    sx={{ mr: 2 }}
+                    sx={{ 
+                      mr: { xs: 0, md: 2 },
+                      width: { xs: '100%', md: 'auto' },
+                      py: { xs: 1.5, md: 1 },
+                      fontSize: { xs: '1rem', md: '0.875rem' },
+                      minHeight: { xs: 48, md: 40 }
+                    }}
                   >
                     Adjuntar archivos
                   </Button>
                 </label>
                 {archivos.length > 0 && (
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ fontSize: { xs: '1rem', md: '0.875rem' } }}>
                     {archivos.length} archivo{archivos.length !== 1 ? 's' : ''} seleccionado{archivos.length !== 1 ? 's' : ''}
                   </Typography>
                 )}
@@ -347,7 +409,13 @@ const Ayuda: React.FC = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
-                sx={{ mt: 2, fontWeight: 700, fontSize: 16, py: 1.5 }}
+                sx={{ 
+                  mt: { xs: 3, md: 2 }, 
+                  fontWeight: 700, 
+                  fontSize: { xs: '1.125rem', md: 16 }, 
+                  py: { xs: 2, md: 1.5 },
+                  minHeight: { xs: 56, md: 48 }
+                }}
               >
                 Enviar Mensaje
               </Button>
@@ -361,7 +429,17 @@ const Ayuda: React.FC = () => {
         <Typography variant="h5" gutterBottom>
           Recursos Adicionales
         </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            gap: 3, 
+            flexWrap: 'wrap',
+            maxWidth: 500,
+            mx: 'auto',
+            px: { xs: 2, md: 0 }
+          }}
+        >
           {recursos.map((recurso, index) => (
             <MuiLink 
               key={index} 
@@ -380,6 +458,8 @@ const Ayuda: React.FC = () => {
                   p: 2, 
                   textAlign: 'center', 
                   width: 200,
+                  minHeight: 120,
+                  borderRadius: 4,
                   transition: 'transform 0.3s',
                   '&:hover': { transform: 'scale(1.05)' }
                 }}
@@ -408,13 +488,25 @@ const Ayuda: React.FC = () => {
       </Snackbar>
 
       {/* Botón flotante de chat */}
-      <Fab 
-        color="primary" 
-        sx={{ position: 'fixed', bottom: 32, right: 32, zIndex: 1200, boxShadow: '0 4px 24px rgba(59,130,246,0.25)' }}
+      <Fab
+        color="primary"
+        aria-label="chat"
         onClick={() => setChatOpen(true)}
-        aria-label="Abrir chat de soporte"
+        sx={{ 
+          position: 'fixed', 
+          bottom: 32, 
+          right: { xs: 16, sm: 32 }, 
+          zIndex: 1200, 
+          boxShadow: '0 4px 24px rgba(59,130,246,0.25)',
+          width: 64, 
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'right 0.2s',
+        }}
       >
-        <ChatIcon />
+        <ChatIcon sx={{ fontSize: 32 }} />
       </Fab>
 
       {/* Widget de chat simulado */}
@@ -423,9 +515,10 @@ const Ayuda: React.FC = () => {
           sx={{
             position: 'fixed',
             bottom: 96,
-            right: 32,
-            width: 340,
-            maxWidth: '95vw',
+            right: { xs: 8, sm: 32 },
+            left: { xs: 8, sm: 'auto' },
+            width: { xs: '95vw', sm: 340 },
+            maxWidth: 360,
             bgcolor: 'background.paper',
             borderRadius: 3,
             boxShadow: '0 8px 32px rgba(59,130,246,0.18)',
@@ -487,10 +580,21 @@ const Ayuda: React.FC = () => {
               placeholder="Escribe tu mensaje..."
               size="small"
               fullWidth
-              sx={{ bgcolor: 'white', borderRadius: 1 }}
+              sx={{ 
+                bgcolor: 'white', 
+                borderRadius: 1,
+                '& .MuiInputBase-root': {
+                  minHeight: { xs: 56, md: 40 },
+                  fontSize: { xs: '1rem', md: '0.875rem' }
+                }
+              }}
               InputProps={{
                 endAdornment: (
-                  <IconButton onClick={handleSendChat} color="primary">
+                  <IconButton 
+                    onClick={handleSendChat} 
+                    color="primary"
+                    sx={{ fontSize: { xs: '1.25rem', md: '1.25rem' } }}
+                  >
                     <SendIcon />
                   </IconButton>
                 )

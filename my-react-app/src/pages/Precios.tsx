@@ -30,7 +30,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Stack
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CalculateIcon from '@mui/icons-material/Calculate';
@@ -40,6 +41,7 @@ import StarIcon from '@mui/icons-material/Star';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import SendIcon from '@mui/icons-material/Send';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 // Configuración de Analytics (simulado)
 const trackEvent = (eventName: string, eventProperties?: Record<string, any>) => {
@@ -141,6 +143,13 @@ const faqData = [
     pregunta: '¿Qué incluye el soporte prioritario?',
     respuesta: 'El soporte prioritario incluye respuesta en menos de 2 horas, chat en vivo y asistencia telefónica durante horario laboral.'
   }
+];
+
+const caracteristicas = [
+  'Transacciones por mes',
+  'Comisión por transacción',
+  'Soporte',
+  'Reportes'
 ];
 
 const Precios: React.FC = () => {
@@ -254,6 +263,7 @@ const Precios: React.FC = () => {
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 4, mb: 4 }}>
             <Box>
               <Typography variant="h6" sx={{ mb: 2 }}>Monto por transacción</Typography>
+              {/* Calculadora de comisiones - hacer responsive */}
               <TextField
                 fullWidth
                 type="number"
@@ -272,11 +282,15 @@ const Precios: React.FC = () => {
                   setInputError('');
                 }}
                 InputProps={{
-                  startAdornment: <Typography sx={{ mr: 1 }}>$</Typography>,
+                  startAdornment: <Typography sx={{ mr: 1, fontSize: { xs: '1rem', md: '1rem' } }}>$</Typography>,
                 }}
                 sx={{ 
                   bgcolor: 'rgba(255,255,255,0.1)', 
                   borderRadius: 1,
+                  '& .MuiInputBase-root': {
+                    minHeight: { xs: 56, md: 48 },
+                    fontSize: { xs: '1rem', md: '1rem' }
+                  },
                   '& input': { 
                     color: 'white',
                     '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
@@ -362,20 +376,38 @@ const Precios: React.FC = () => {
       </Card>
 
       {/* Modal de Contacto */}
-      <Dialog 
-        open={openContactModal} 
+      {/* Modal de contacto - hacer fullscreen en mobile */}
+      <Dialog
+        open={openContactModal}
         onClose={() => setOpenContactModal(false)}
-        maxWidth="sm"
-        fullWidth
+        fullScreen={window.innerWidth < 600}
+        PaperProps={{
+          sx: {
+            borderRadius: { xs: 0, sm: 3 },
+            background: 'linear-gradient(135deg, #1E1E1E 0%, #121212 100%)',
+            color: 'white',
+            width: { xs: '100%', sm: 'auto' },
+            maxWidth: { xs: '100%', sm: 600 }
+          }
+        }}
       >
-        <DialogTitle>Contacta con Ventas</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
+        <DialogTitle sx={{ fontSize: { xs: '1.5rem', md: '1.25rem' } }}>Contacta con Ventas</DialogTitle>
+        <DialogContent sx={{ p: { xs: 3, md: 2 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 3, md: 3 }, mt: 1 }}>
             <TextField
               label="Nombre"
               value={contactForm.nombre}
               onChange={(e) => handleContactChange('nombre', e.target.value)}
               fullWidth
+              sx={{
+                '& .MuiInputBase-root': {
+                  minHeight: { xs: 56, md: 48 },
+                  fontSize: { xs: '1rem', md: '1rem' }
+                },
+                '& .MuiInputLabel-root': {
+                  fontSize: { xs: '1rem', md: '1rem' }
+                }
+              }}
             />
             <TextField
               label="Email"
@@ -383,6 +415,15 @@ const Precios: React.FC = () => {
               value={contactForm.email}
               onChange={(e) => handleContactChange('email', e.target.value)}
               fullWidth
+              sx={{
+                '& .MuiInputBase-root': {
+                  minHeight: { xs: 56, md: 48 },
+                  fontSize: { xs: '1rem', md: '1rem' }
+                },
+                '& .MuiInputLabel-root': {
+                  fontSize: { xs: '1rem', md: '1rem' }
+                }
+              }}
             />
             <TextField
               label="Teléfono"
@@ -390,13 +431,28 @@ const Precios: React.FC = () => {
               value={contactForm.telefono}
               onChange={(e) => handleContactChange('telefono', e.target.value)}
               fullWidth
+              sx={{
+                '& .MuiInputBase-root': {
+                  minHeight: { xs: 56, md: 48 },
+                  fontSize: { xs: '1rem', md: '1rem' }
+                },
+                '& .MuiInputLabel-root': {
+                  fontSize: { xs: '1rem', md: '1rem' }
+                }
+              }}
             />
             <FormControl fullWidth>
-              <InputLabel>Plan de Interés</InputLabel>
+              <InputLabel sx={{ fontSize: { xs: '1rem', md: '1rem' } }}>Plan de Interés</InputLabel>
               <Select
                 value={contactForm.interes}
                 label="Plan de Interés"
                 onChange={(e) => handleContactChange('interes', e.target.value as string)}
+                sx={{
+                  '& .MuiSelect-select': {
+                    minHeight: { xs: 56, md: 48 },
+                    fontSize: { xs: '1rem', md: '1rem' }
+                  }
+                }}
               >
                 {planesData.map(plan => (
                   <MenuItem key={plan.nombre} value={plan.nombre}>
@@ -412,19 +468,38 @@ const Precios: React.FC = () => {
               value={contactForm.mensaje}
               onChange={(e) => handleContactChange('mensaje', e.target.value)}
               fullWidth
+              sx={{
+                '& .MuiInputBase-root': {
+                  fontSize: { xs: '1rem', md: '1rem' }
+                },
+                '& .MuiInputLabel-root': {
+                  fontSize: { xs: '1rem', md: '1rem' }
+                }
+              }}
             />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenContactModal(false)} color="secondary">
+        <DialogActions sx={{ p: { xs: 3, md: 2 } }}>
+          <Button 
+            onClick={() => setOpenContactModal(false)} 
+            color="secondary"
+            sx={{ 
+              fontSize: { xs: '1rem', md: '0.875rem' },
+              minHeight: { xs: 48, md: 40 }
+            }}
+          >
             Cancelar
           </Button>
           <Button 
             onClick={handleContactSubmit} 
             color="primary" 
             variant="contained"
+            sx={{ 
+              fontSize: { xs: '1rem', md: '0.875rem' },
+              minHeight: { xs: 48, md: 40 }
+            }}
           >
-            Enviar Mensaje
+            Enviar
           </Button>
         </DialogActions>
       </Dialog>
@@ -435,10 +510,11 @@ const Precios: React.FC = () => {
           Planes Disponibles
         </Typography>
         
+        {/* Cards de planes - hacer responsive */}
         <Box sx={{ 
           display: 'grid', 
           gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, 
-          gap: 4 
+          gap: { xs: 3, md: 4 } 
         }}>
           {planesData.map((plan, index) => (
             <Card 
@@ -451,6 +527,7 @@ const Precios: React.FC = () => {
                 borderColor: plan.recomendado ? 'success.main' : 'grey.300',
                 transform: plan.recomendado ? 'scale(1.05)' : 'none',
                 transition: 'transform 0.3s ease',
+                width: '100%',
                 '&:hover': {
                   transform: plan.recomendado ? 'scale(1.08)' : 'scale(1.02)',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.15)'
@@ -475,12 +552,12 @@ const Precios: React.FC = () => {
                 </Box>
               )}
               
-              <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: 4 }}>
+              <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: { xs: 3, md: 4 } }}>
                 <Typography 
                   variant="h4" 
                   component="h2" 
                   color={plan.recomendado ? 'success.main' : 'inherit'}
-                  sx={{ fontWeight: 700, mb: 2 }}
+                  sx={{ fontWeight: 700, mb: 2, fontSize: { xs: '1.5rem', md: '2.125rem' } }}
                 >
                   {plan.nombre}
                 </Typography>
@@ -488,7 +565,7 @@ const Precios: React.FC = () => {
                 <Typography 
                   variant="h3" 
                   component="p" 
-                  sx={{ my: 3, fontWeight: 900 }}
+                  sx={{ my: 3, fontWeight: 900, fontSize: { xs: '2rem', md: '3rem' } }}
                 >
                   {plan.precio === 'Personalizado' 
                     ? plan.precio 
@@ -500,26 +577,26 @@ const Precios: React.FC = () => {
                 {plan.caracteristicas.map((caracteristica, idx) => (
                   <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'center' }}>
                     <CheckCircleIcon sx={{ color: 'success.main', mr: 1 }} />
-                    <Typography variant="body1">
+                    <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
                       {caracteristica}
                     </Typography>
                   </Box>
                 ))}
                 
                 <Button 
-                  variant={plan.recomendado ? 'contained' : 'outlined'} 
+                  variant="contained"
                   color={plan.recomendado ? 'success' : 'primary'}
                   size="large"
+                  fullWidth
                   sx={{ 
-                    mt: 4, 
-                    width: '100%', 
-                    py: 1.5,
-                    fontWeight: 700,
-                    fontSize: 16
+                    mt: 3,
+                    py: { xs: 1.5, md: 2 },
+                    fontSize: { xs: '1rem', md: '1.125rem' },
+                    fontWeight: 'bold'
                   }}
                   onClick={() => handlePlanSelection(plan.nombre)}
                 >
-                  {plan.recomendado ? 'Comenzar Ahora' : 'Elegir Plan'}
+                  {plan.recomendado ? 'COMENZAR AHORA' : 'SABER MÁS'}
                 </Button>
               </CardContent>
             </Card>
@@ -528,58 +605,246 @@ const Precios: React.FC = () => {
       </Box>
 
       {/* Tabla Comparativa Mejorada */}
+      {/* Tabla de comparación de precios - convertir a cards en mobile */}
       <Box sx={{ mb: 6 }}>
-        <Typography variant="h4" sx={{ textAlign: 'center', mb: 4, fontWeight: 700 }}>
-          Comparación de Planes
-        </Typography>
-        <TableContainer component={Paper} sx={{ boxShadow: '0 4px 24px rgba(0,0,0,0.1)' }}>
-          <Table>
-            <TableHead sx={{ bgcolor: 'primary.main' }}>
-              <TableRow>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Característica</TableCell>
-                {planesData.map(plan => (
-                  <TableCell 
-                    key={plan.nombre} 
-                    sx={{ 
-                      color: 'white', 
-                      fontWeight: 'bold', 
-                      textAlign: 'center',
-                      bgcolor: plan.recomendado ? 'success.main' : undefined
-                    }}
-                  >
-                    {plan.nombre}
+        <Typography variant="h4" sx={{ mb: 3, fontWeight: 700, textAlign: 'center', fontSize: { xs: '1.5rem', md: '2rem' } }}>
+            Comparación de Planes
+          </Typography>
+          
+        {/* Vista de tabla para desktop */}
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+          <TableContainer component={Paper} sx={{ 
+            boxShadow: '0 4px 24px rgba(0,0,0,0.1)',
+            borderRadius: 3,
+            overflow: 'hidden'
+          }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ 
+                    color: 'white', 
+                    fontWeight: 'bold',
+                    bgcolor: 'rgba(255,255,255,0.1)',
+                    fontSize: '1.125rem'
+                  }}>
+                    Característica
                   </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {[
-                'Transacciones por mes',
-                'Comisión por transacción',
-                'Soporte',
-                'Reportes'
-              ].map((caracteristica, rowIndex) => (
-                <TableRow key={caracteristica}>
-                  <TableCell sx={{ fontWeight: 'bold' }}>{caracteristica}</TableCell>
-                  {planesData.map((plan, colIndex) => (
-                    <TableCell 
-                      key={plan.nombre} 
-                      sx={{ 
+                  {planesData.map((plan, index) => (
+                    <TableCell
+                      key={plan.nombre}
+                      sx={{
+                        color: 'white',
+                        fontWeight: 'bold',
                         textAlign: 'center',
-                        bgcolor: colIndex === 1 ? 'rgba(16,185,129,0.1)' : undefined
+                        bgcolor: index === 0 ? 'rgba(59,130,246,0.8)' : 
+                                index === 1 ? 'rgba(16,185,129,0.8)' : 
+                                'rgba(139,92,246,0.8)',
+                        fontSize: '1.125rem'
                       }}
                     >
-                      {rowIndex === 0 && (plan.nombre === 'Básico' ? '5' : plan.nombre === 'Pro' ? '50' : 'Ilimitadas')}
-                      {rowIndex === 1 && (plan.nombre === 'Básico' ? '0.5%' : plan.nombre === 'Pro' ? '0.3%' : '0.1%')}
-                      {rowIndex === 2 && (plan.nombre === 'Básico' ? 'Correo' : plan.nombre === 'Pro' ? 'Prioritario' : 'Dedicado 24/7')}
-                      {rowIndex === 3 && (plan.nombre === 'Básico' ? 'Básicos' : plan.nombre === 'Pro' ? 'Detallados' : 'Personalizados')}
+                      {plan.nombre}
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {caracteristicas.map((caracteristica) => (
+                  <TableRow key={caracteristica}>
+                    <TableCell sx={{ 
+                      fontWeight: 'bold',
+                      bgcolor: 'rgba(255,255,255,0.05)',
+                      fontSize: '1rem'
+                    }}>
+                      {caracteristica}
+                    </TableCell>
+                    {planesData.map((plan, index) => {
+                      const isIncluded = plan.caracteristicas.includes(caracteristica);
+                      return (
+                        <TableCell
+                          key={plan.nombre}
+                          sx={{
+                            textAlign: 'center',
+                            bgcolor: isIncluded ? 
+                              (index === 0 ? 'rgba(34,197,94,0.2)' : 
+                               index === 1 ? 'rgba(34,197,94,0.2)' : 
+                               'rgba(34,197,94,0.2)') : 
+                              'rgba(239,68,68,0.1)',
+                            borderLeft: index === 0 ? 'none' : '1px solid rgba(255,255,255,0.1)'
+                          }}
+                        >
+                          <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 1
+                          }}>
+                            {isIncluded ? (
+                              <>
+                                <CheckCircleIcon sx={{ 
+                                  color: 'success.main', 
+                                  fontSize: '1.5rem',
+                                  filter: 'drop-shadow(0 2px 4px rgba(34,197,94,0.3))'
+                                }} />
+                                <Typography sx={{ 
+                                  color: 'success.main', 
+                                  fontWeight: 600,
+                                  fontSize: '0.875rem'
+                                }}>
+                                  Incluido
+                                </Typography>
+                              </>
+                            ) : (
+                              <>
+                                <CancelIcon sx={{ 
+                                  color: 'error.main', 
+                                  fontSize: '1.5rem',
+                                  filter: 'drop-shadow(0 2px 4px rgba(239,68,68,0.3))'
+                                }} />
+                                <Typography sx={{ 
+                                  color: 'error.main', 
+                                  fontWeight: 600,
+                                  fontSize: '0.875rem'
+                                }}>
+                                  No incluido
+                                </Typography>
+                              </>
+                            )}
+                          </Box>
+                        </TableCell>
+                      );
+                    })}
+                </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+
+        {/* Vista de cards para mobile */}
+        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+          <Stack spacing={3}>
+            {caracteristicas.map((caracteristica) => (
+              <Card
+                key={caracteristica}
+                sx={{
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #23272F 0%, #1A1D23 100%)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                  p: 3,
+                  border: '1px solid rgba(255,255,255,0.1)'
+                }}
+              >
+                <Typography variant="h6" sx={{ 
+                  fontWeight: 700, 
+                  mb: 3, 
+                  color: 'white',
+                  fontSize: '1.25rem',
+                  textAlign: 'center',
+                  pb: 2,
+                  borderBottom: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  {caracteristica}
+                </Typography>
+                
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {planesData.map((plan, index) => {
+                    const isIncluded = plan.caracteristicas.includes(caracteristica);
+                    const planColors = [
+                      { bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.4)' },
+                      { bg: 'rgba(16,185,129,0.2)', border: 'rgba(16,185,129,0.4)' },
+                      { bg: 'rgba(139,92,246,0.2)', border: 'rgba(139,92,246,0.4)' }
+                    ];
+                    
+                    return (
+                      <Box
+                        key={plan.nombre}
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          p: 3,
+                          borderRadius: 3,
+                          background: isIncluded ? planColors[index].bg : 'rgba(239,68,68,0.1)',
+                          border: `2px solid ${isIncluded ? planColors[index].border : 'rgba(239,68,68,0.3)'}`,
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            transform: 'translateY(-2px)',
+                            boxShadow: `0 8px 20px ${isIncluded ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'}`
+                          }
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box sx={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: '50%',
+                            background: planColors[index].bg,
+                            border: `2px solid ${planColors[index].border}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.25rem',
+                            fontWeight: 'bold',
+                            color: 'white'
+                          }}>
+                            {index === 0 ? 'B' : index === 1 ? 'P' : 'E'}
+                          </Box>
+                          <Typography variant="body1" sx={{ 
+                            fontWeight: 600,
+                            color: 'white',
+                            fontSize: '1.125rem'
+                          }}>
+                            {plan.nombre}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 1,
+                          p: 1,
+                          borderRadius: 2,
+                          background: isIncluded ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'
+                        }}>
+                          {isIncluded ? (
+                            <>
+                              <CheckCircleIcon sx={{ 
+                                color: 'success.main', 
+                                fontSize: '1.5rem',
+                                filter: 'drop-shadow(0 2px 4px rgba(34,197,94,0.3))'
+                              }} />
+                              <Typography variant="body2" sx={{ 
+                                color: 'success.main', 
+                                fontWeight: 700,
+                                fontSize: '0.875rem'
+                              }}>
+                                Incluido
+                              </Typography>
+                            </>
+                          ) : (
+                            <>
+                              <CancelIcon sx={{ 
+                                color: 'error.main', 
+                                fontSize: '1.5rem',
+                                filter: 'drop-shadow(0 2px 4px rgba(239,68,68,0.3))'
+                              }} />
+                              <Typography variant="body2" sx={{ 
+                                color: 'error.main', 
+                                fontWeight: 700,
+                                fontSize: '0.875rem'
+                              }}>
+                                No incluido
+                              </Typography>
+                            </>
+                          )}
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Card>
+            ))}
+          </Stack>
+        </Box>
       </Box>
 
       {/* Ejemplos de Ahorro */}
@@ -587,27 +852,32 @@ const Precios: React.FC = () => {
         <Typography variant="h4" sx={{ textAlign: 'center', mb: 4, fontWeight: 700 }}>
           Casos de Ahorro Real
         </Typography>
+        {/* Cards de casos de ahorro - hacer responsive */}
         <Box sx={{ 
           display: 'grid', 
           gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, 
-          gap: 4 
+          gap: { xs: 3, md: 4 } 
         }}>
           {planesData.map((plan) => (
-            <Card key={plan.nombre} sx={{ height: '100%', p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
+            <Card key={plan.nombre} sx={{ 
+              height: '100%', 
+              p: { xs: 3, md: 3 },
+              width: '100%'
+            }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, fontSize: { xs: '1.125rem', md: '1.25rem' } }}>
                 {plan.ejemploAhorro.escenario}
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography>Transacciones:</Typography>
-                <Typography fontWeight="bold">{plan.ejemploAhorro.transacciones}</Typography>
+                <Typography sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Transacciones:</Typography>
+                <Typography fontWeight="bold" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>{plan.ejemploAhorro.transacciones}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography>Monto Total:</Typography>
-                <Typography fontWeight="bold">${plan.ejemploAhorro.montoTotal.toLocaleString()}</Typography>
+                <Typography sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Monto Total:</Typography>
+                <Typography fontWeight="bold" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>${plan.ejemploAhorro.montoTotal.toLocaleString()}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                <Typography>Ahorro Mensual:</Typography>
-                <Typography fontWeight="bold" color="success.main">
+                <Typography sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Ahorro Mensual:</Typography>
+                <Typography fontWeight="bold" color="success.main" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
                   ${plan.ejemploAhorro.ahorroMensual.toLocaleString()}
                 </Typography>
               </Box>
@@ -615,9 +885,9 @@ const Precios: React.FC = () => {
                 label={`Ahorro Anual: $${plan.ejemploAhorro.ahorroAnual.toLocaleString()}`} 
                 color="primary" 
                 variant="outlined" 
-                sx={{ fontWeight: 'bold' }} 
+                sx={{ fontWeight: 'bold', fontSize: { xs: '0.75rem', md: '0.875rem' } }} 
               />
-            </Card>
+      </Card>
           ))}
         </Box>
       </Box>
@@ -647,7 +917,7 @@ const Precios: React.FC = () => {
       {/* Call to Action con A/B Testing */}
       <Box sx={{ 
         bgcolor: 'primary.main', 
-        color: 'white', 
+        color: 'white',
         borderRadius: 4, 
         p: 6, 
         textAlign: 'center',
@@ -661,14 +931,14 @@ const Precios: React.FC = () => {
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3 }}>
           {planesData[0].ctaVariants.map((variant, index) => (
-            <Button
+        <Button 
               key={index}
-              variant="contained"
+          variant="contained" 
               color={variant.color as 'primary' | 'secondary'}
-              size="large"
+          size="large"
               startIcon={<SendIcon />}
-              sx={{ 
-                px: 4, 
+          sx={{ 
+            px: 4,
                 py: 2, 
                 fontWeight: 'bold', 
                 borderRadius: 3,
@@ -677,7 +947,7 @@ const Precios: React.FC = () => {
               onClick={() => trackEvent('cta_clicked', { variant: variant.texto })}
             >
               {variant.texto}
-            </Button>
+        </Button>
           ))}
         </Box>
       </Box>

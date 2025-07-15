@@ -25,6 +25,8 @@ import { useMockApp } from '../context/MockAppContext';
 interface MXNBBalanceProps {
   showAddTokenButton?: boolean;
   compact?: boolean;
+  onOpenSend?: () => void;
+  onOpenReceive?: () => void;
 }
 
 const MXNB_TOKEN_DATA = {
@@ -36,7 +38,9 @@ const MXNB_TOKEN_DATA = {
 
 const MXNBBalance: React.FC<MXNBBalanceProps> = ({ 
   showAddTokenButton = true, 
-  compact = false 
+  compact = false,
+  onOpenSend,
+  onOpenReceive
 }) => {
   const { balance, user } = useMockApp();
   const [open, setOpen] = useState(false);
@@ -98,6 +102,23 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
     }
   };
 
+  // Funciones para manejar envío y recepción
+  const handleSendPayment = () => {
+    if (onOpenSend) {
+      onOpenSend();
+    } else {
+      alert('Función de envío de pago no implementada.');
+    }
+  };
+
+  const handleReceivePayment = () => {
+    if (onOpenReceive) {
+      onOpenReceive();
+    } else {
+      alert('Función de recepción de pago no implementada.');
+    }
+  };
+
   if (compact) {
     const mxnb = balance.find(b => b.symbol === 'MXNB')?.balance ?? 0;
     return (
@@ -117,200 +138,204 @@ const MXNBBalance: React.FC<MXNBBalanceProps> = ({
     );
   }
 
+  const mxnbBalance = balance.find(b => b.symbol === 'MXNB')?.balance ?? 0;
+
   return (
-    <>
-      <Card
-        sx={{
-          borderRadius: 3,
-          background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
-          color: 'white',
-          boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
-          position: 'relative',
-          overflow: 'visible'
-        }}
-      >
-        <CardContent
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            p: 4,
-            position: 'relative'
-          }}
-        >
-          {/* Botón de actualizar */}
-          <Tooltip title="Actualizar saldo">
-            <IconButton
-              onClick={handleRefresh}
+    <Card sx={{ 
+      borderRadius: 3, 
+      background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)', 
+      color: 'white', 
+      boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
+      p: { xs: 2, md: 3 }
+    }}>
+      <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: { xs: 2, md: 3 } }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
+            Balance MXNB
+          </Typography>
+          {showAddTokenButton && (
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleOpenModal}
               sx={{
-                position: 'absolute',
-                top: 16,
-                right: 16,
+                fontSize: { xs: '0.875rem', md: '1rem' },
+                px: { xs: 2, md: 3 },
+                py: { xs: 1, md: 1.5 },
+                borderColor: 'rgba(255,255,255,0.3)',
                 color: 'white',
                 '&:hover': {
+                  borderColor: 'white',
                   backgroundColor: 'rgba(255,255,255,0.1)'
                 }
               }}
             >
-              <RefreshIcon />
-            </IconButton>
-          </Tooltip>
-
-          <Avatar
-            sx={{
-              bgcolor: 'rgba(255,255,255,0.2)',
-              width: 80,
-              height: 80,
-              mb: 2
-            }}
-          >
-            <AccountBalanceWalletIcon
-              sx={{
-                fontSize: 48,
-                color: 'white'
-              }}
-            />
-          </Avatar>
-
-          <Typography
-            variant="h5"
-            sx={{
-              mb: 1,
-              fontWeight: 'bold',
-              color: 'rgba(255,255,255,0.8)'
-            }}
-          >
-            Balance de Tokens
-          </Typography>
-
-          {!user ? (
-            <Box sx={{ textAlign: 'center', py: 2 }}>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Inicia sesión para ver tu saldo
-              </Typography>
-            </Box>
-          ) : (
-            <>
-              {showAlert && (
-                <Alert severity="success" sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.1)' }}>
-                  ¡Saldo actualizado!
-                </Alert>
-              )}
-              {balance.map((b) => (
-                <Typography
-                  key={b.symbol}
-                  variant="h3"
-                  sx={{
-                    mb: 2,
-                    fontWeight: 'bold',
-                    textShadow: '0 4px 6px rgba(0,0,0,0.2)'
-                  }}
-                >
-                  {b.balance.toLocaleString('es-MX', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })} {b.symbol}
-                </Typography>
-              ))}
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Chip
-                  label="Stablecoin MXNB"
-                  color="default"
-                  sx={{
-                    color: 'white',
-                    background: 'rgba(255,255,255,0.2)'
-                  }}
-                />
-                {showAddTokenButton && (
-                  <Button 
-                    variant="outlined" 
-                    color="inherit"
-                    onClick={handleOpenModal}
-                    sx={{ 
-                      color: 'white', 
-                      borderColor: 'rgba(255,255,255,0.5)',
-                      '&:hover': {
-                        borderColor: 'white',
-                        backgroundColor: 'rgba(255,255,255,0.1)'
-                      }
-                    }}
-                  >
-                    Agregar Token MXNB
-                  </Button>
-                )}
-              </Box>
-              <Typography
-                variant="caption"
-                sx={{
-                  mt: 2,
-                  opacity: 0.7,
-                  textAlign: 'center'
-                }}
-              >
-                Actualizado automáticamente
-              </Typography>
-            </>
-          )}
-        </CardContent>
-      </Card>
-      {/* Modal para mostrar los datos del token */}
-      <Dialog open={open} onClose={handleCloseModal}>
-        <DialogTitle>Agregar MXNB a tu wallet</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 320 }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Sigue estos pasos para agregar MXNB a tu wallet:
-            </Typography>
-            <ol style={{ marginLeft: 16, marginBottom: 16, color: '#fff' }}>
-              <li>Abre tu wallet (MetaMask, Rabby, etc).</li>
-              <li>
-                Cámbiate a la red <b>Arbitrum Sepolia</b>.<br/>
-                <span style={{ fontSize: 13, color: '#aaa' }}>
-                  Si no la tienes, agrégala:<br/>
-                  <b>Nombre:</b> Arbitrum Sepolia<br/>
-                  <b>RPC:</b> https://sepolia-rollup.arbitrum.io/rpc<br/>
-                  <b>Chain ID:</b> 421614<br/>
-                  <b>Símbolo:</b> ETH<br/>
-                  <b>Block Explorer:</b> https://sepolia.arbiscan.io
-                </span>
-              </li>
-              <li>Ve a la sección “Agregar token” o “Importar token”.</li>
-              <li>Copia y pega estos datos:</li>
-            </ol>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <strong>Dirección:</strong>
-              <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>{MXNB_TOKEN_DATA.address}</Typography>
-              <IconButton size="small" onClick={() => handleCopy(MXNB_TOKEN_DATA.address, 'Dirección')}> <ContentCopyIcon fontSize="small" /> </IconButton>
-              {copied === 'Dirección' && <Typography color="success.main" variant="caption">¡Copiado!</Typography>}
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <strong>Símbolo:</strong>
-              <Typography variant="body2">{MXNB_TOKEN_DATA.symbol}</Typography>
-              <IconButton size="small" onClick={() => handleCopy(MXNB_TOKEN_DATA.symbol, 'Símbolo')}> <ContentCopyIcon fontSize="small" /> </IconButton>
-              {copied === 'Símbolo' && <Typography color="success.main" variant="caption">¡Copiado!</Typography>}
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <strong>Decimales:</strong>
-              <Typography variant="body2">{MXNB_TOKEN_DATA.decimals}</Typography>
-              <IconButton size="small" onClick={() => handleCopy(String(MXNB_TOKEN_DATA.decimals), 'Decimales')}> <ContentCopyIcon fontSize="small" /> </IconButton>
-              {copied === 'Decimales' && <Typography color="success.main" variant="caption">¡Copiado!</Typography>}
-            </Box>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2, fontWeight: 'bold' }}
-              onClick={handleAddMXNBToken}
-              fullWidth
-            >
-              Agregar automáticamente a MetaMask
+              Agregar Token
             </Button>
+          )}
+        </Box>
+        
+        <Box sx={{ textAlign: 'center', mb: { xs: 3, md: 4 } }}>
+          <Typography variant="h3" sx={{ 
+            fontWeight: 'bold', 
+            mb: { xs: 1, md: 2 },
+            fontSize: { xs: '2rem', md: '3rem' }
+          }}>
+            {mxnbBalance.toLocaleString('es-MX', { 
+              style: 'currency', 
+              currency: 'MXN',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
+          </Typography>
+          <Typography variant="body1" sx={{ 
+            opacity: 0.8,
+            fontSize: { xs: '1rem', md: '1.125rem' }
+          }}>
+            Stablecoin MXNB
+          </Typography>
+        </Box>
+
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: { xs: 2, md: 3 }
+        }}>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleSendPayment}
+            sx={{
+              fontSize: { xs: '1rem', md: '1.125rem' },
+              px: { xs: 3, md: 4 },
+              py: { xs: 1.5, md: 2 },
+              minHeight: { xs: 48, md: 56 },
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.3)'
+              }
+            }}
+          >
+            Enviar
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={handleReceivePayment}
+            sx={{
+              fontSize: { xs: '1rem', md: '1.125rem' },
+              px: { xs: 3, md: 4 },
+              py: { xs: 1.5, md: 2 },
+              minHeight: { xs: 48, md: 56 },
+              borderColor: 'rgba(255,255,255,0.3)',
+              color: 'white',
+              '&:hover': {
+                borderColor: 'white',
+                backgroundColor: 'rgba(255,255,255,0.1)'
+              }
+            }}
+          >
+            Recibir
+          </Button>
+        </Box>
+
+        {/* Información adicional */}
+        <Box sx={{ 
+          mt: { xs: 3, md: 4 },
+          p: { xs: 2, md: 3 },
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          borderRadius: 2
+        }}>
+          <Typography variant="body2" sx={{ 
+            textAlign: 'center',
+            fontSize: { xs: '0.875rem', md: '1rem' }
+          }}>
+            <strong>Nota:</strong> MXNB es un stablecoin 1:1 con el peso mexicano.
+          </Typography>
+        </Box>
+      </CardContent>
+
+      {/* Modal para agregar token */}
+      <Dialog 
+        open={open} 
+        onClose={handleCloseModal}
+        fullScreen={window.innerWidth < 600}
+        PaperProps={{
+          sx: {
+            borderRadius: { xs: 0, sm: 3 },
+            background: 'linear-gradient(135deg, #1E1E1E 0%, #121212 100%)',
+            color: 'white',
+            width: { xs: '100%', sm: 'auto' },
+            maxWidth: { xs: '100%', sm: 600 }
+          }
+        }}
+      >
+        <DialogTitle sx={{ fontSize: { xs: '1.5rem', md: '1.25rem' } }}>Agregar MXNB a tu wallet</DialogTitle>
+        <DialogContent sx={{ p: { xs: 3, md: 2 } }}>
+          <Typography variant="body1" sx={{ mb: { xs: 2, md: 3 }, fontSize: { xs: '1rem', md: '1rem' } }}>
+            Para agregar MXNB a tu wallet, necesitas:
+          </Typography>
+          
+          <Box sx={{ mb: { xs: 2, md: 3 } }}>
+            <Typography variant="h6" sx={{ mb: { xs: 1, md: 2 }, fontWeight: 700, fontSize: { xs: '1.125rem', md: '1.25rem' } }}>
+              Dirección del Contrato MXNB
+            </Typography>
+            <Box sx={{ 
+              p: { xs: 2, md: 2 }, 
+              bgcolor: 'rgba(255,255,255,0.1)', 
+              borderRadius: 1, 
+              fontFamily: 'monospace',
+              fontSize: { xs: '1rem', md: '1rem' }, // Cambiado de 0.875rem a 1rem en mobile
+              wordBreak: 'break-all'
+            }}>
+              0x1234567890abcdef1234567890abcdef12345678
+            </Box>
+          </Box>
+          
+          <Box sx={{ mb: { xs: 2, md: 3 } }}>
+            <Typography variant="h6" sx={{ mb: { xs: 1, md: 2 }, fontWeight: 700, fontSize: { xs: '1.125rem', md: '1.25rem' } }}>
+              Red
+            </Typography>
+            <Chip 
+              label="Arbitrum Sepolia" 
+              color="primary" 
+              sx={{ fontSize: { xs: '1rem', md: '1rem' } }} // Cambiado de 0.875rem a 1rem en mobile
+            />
+          </Box>
+          
+          <Box sx={{ mb: { xs: 2, md: 3 } }}>
+            <Typography variant="h6" sx={{ mb: { xs: 1, md: 2 }, fontWeight: 700, fontSize: { xs: '1.125rem', md: '1.25rem' } }}>
+              Símbolo
+            </Typography>
+            <Typography sx={{ fontSize: { xs: '1rem', md: '1rem' } }}>
+              MXNB
+            </Typography>
+          </Box>
+          
+          <Box sx={{ mb: { xs: 2, md: 3 } }}>
+            <Typography variant="h6" sx={{ mb: { xs: 1, md: 2 }, fontWeight: 700, fontSize: { xs: '1.125rem', md: '1.25rem' } }}>
+              Decimales
+            </Typography>
+            <Typography sx={{ fontSize: { xs: '1rem', md: '1rem' } }}>
+              18
+            </Typography>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal} color="primary">Cerrar</Button>
+        <DialogActions sx={{ p: { xs: 3, md: 2 } }}>
+          <Button 
+            onClick={handleCloseModal}
+            sx={{ 
+              fontSize: { xs: '1rem', md: '0.875rem' },
+              px: { xs: 3, md: 4 },
+              py: { xs: 1.5, md: 2 },
+              minHeight: { xs: 48, md: 40 }
+            }}
+          >
+            Cerrar
+          </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Card>
   );
 };
 
