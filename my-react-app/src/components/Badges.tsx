@@ -1,39 +1,57 @@
 import React from 'react';
-import { useMockApp } from '../context/MockAppContext';
-import { Box, Typography, Chip, Tooltip, Stack, Card, CardContent } from '@mui/material';
+
+const badgeStyles = {
+  active: 'bg-green-500 text-white',
+  inactive: 'bg-gray-300 text-gray-600',
+};
+
+const badges = [
+  { 
+    name: 'Primer Pago', 
+    icon: '🎉', 
+    active: true 
+  },
+  { 
+    name: 'Pagador Frecuente', 
+    icon: '🚀', 
+    active: false 
+  },
+  { 
+    name: 'Receptor Activo', 
+    icon: '💸', 
+    active: false 
+  },
+  { 
+    name: 'Balance Superior', 
+    icon: '🏆', 
+    active: true 
+  }
+];
 
 const Badges: React.FC = () => {
-  const { badges } = useMockApp();
-  if (!badges || badges.length === 0) return null;
-
   return (
-    <Card sx={{ borderRadius: 3, mb: 4, boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
-      <CardContent>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'text.primary' }}>
-          Logros y Badges
-        </Typography>
-        <Stack direction="row" spacing={2} flexWrap="wrap">
-          {badges.map(badge => (
-            <Tooltip key={badge.id} title={badge.description} arrow>
-              <Chip
-                icon={<span style={{ fontSize: 22 }}>{badge.icon}</span>}
-                label={badge.name}
-                color={badge.achieved ? 'success' : 'default'}
-                variant={badge.achieved ? 'filled' : 'outlined'}
-                sx={{
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                  opacity: badge.achieved ? 1 : 0.5,
-                  px: 2,
-                  py: 1,
-                  mb: 1
-                }}
-              />
-            </Tooltip>
-          ))}
-        </Stack>
-      </CardContent>
-    </Card>
+    <div className="space-y-4 p-4">
+      <h2 className="text-xl font-bold mb-4">Logros y Badges</h2>
+      {badges.map((badge, index) => (
+        <div 
+          key={index} 
+          className={`
+            flex items-center justify-between 
+            p-4 rounded-lg 
+            transition-all duration-300 
+            ${badge.active ? badgeStyles.active : badgeStyles.inactive}
+          `}
+        >
+          <div className="flex items-center space-x-4">
+            <span className="text-2xl">{badge.icon}</span>
+            <span className="font-semibold">{badge.name}</span>
+          </div>
+          {badge.active && (
+            <span className="text-sm">Desbloqueado</span>
+          )}
+        </div>
+      ))}
+    </div>
   );
 };
 

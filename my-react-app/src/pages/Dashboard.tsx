@@ -254,46 +254,95 @@ const Dashboard: React.FC = () => {
   }, [transactions, search, filterType, filterToken, currentPage]);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Acciones rápidas */}
-      <Stack direction="row" spacing={2} sx={{ justifyContent: 'center', mb: 4, flexWrap: 'wrap' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={handleOpenSend}
-          sx={{ fontWeight: 'bold', px: 4, py: 1.5, borderRadius: 3 }}
-        >
-          Enviar Pago
-        </Button>
-        <Button
-          variant="outlined"
-          color="primary"
-          size="large"
-          onClick={handleOpenReceive}
-          sx={{ fontWeight: 'bold', px: 4, py: 1.5, borderRadius: 3 }}
-        >
-          Recibir Pago
-        </Button>
-        <Button
-          variant="contained"
-          color="success"
-          size="large"
-          onClick={() => setOpenDeposit(true)}
-          sx={{ fontWeight: 'bold', px: 4, py: 1.5, borderRadius: 3 }}
-        >
-          Depositar MXNB
-        </Button>
-        <Button
-          variant="outlined"
-          color="success"
-          size="large"
-          onClick={() => setOpenWithdraw(true)}
-          sx={{ fontWeight: 'bold', px: 4, py: 1.5, borderRadius: 3 }}
-        >
-          Retirar MXNB
-        </Button>
-      </Stack>
+    <Container 
+      maxWidth="lg" 
+      sx={{ 
+        py: { xs: 2, sm: 4 },
+        px: { xs: 1, sm: 3 }
+      }}
+    >
+      {/* Sección de acciones principales */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: { xs: 2, sm: 3 },
+          mb: { xs: 2, sm: 4 }
+        }}
+      >
+        {['Enviar Pago', 'Recibir Pago', 'Depositar MXNB', 'Retirar MXNB'].map((action, index) => (
+          <Button
+            key={action}
+            fullWidth
+            variant="contained"
+            color={
+              index === 0 ? 'primary' : 
+              index === 1 ? 'secondary' : 
+              index === 2 ? 'success' : 'error'
+            }
+            sx={{ 
+              py: { xs: 1.5, sm: 2 },
+              fontSize: { xs: 14, sm: 16 },
+              borderRadius: 3
+            }}
+            onClick={() => {
+              switch(action) {
+                case 'Enviar Pago': handleOpenSend(); break;
+                case 'Recibir Pago': handleOpenReceive(); break;
+                case 'Depositar MXNB': setOpenDeposit(true); break;
+                case 'Retirar MXNB': setOpenWithdraw(true); break;
+              }
+            }}
+          >
+            {action}
+          </Button>
+        ))}
+      </Box>
+
+      {/* Sección de Balances de Tokens */}
+      <Typography 
+        variant="h6" 
+        sx={{ 
+          mb: { xs: 1, sm: 2 }, 
+          textAlign: 'center', 
+          fontWeight: 'bold' 
+        }}
+      >
+        Balances de Tokens
+      </Typography>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: { xs: 1, sm: 2 },
+          mb: { xs: 2, sm: 4 }
+        }}
+      >
+        {balance.map((token) => (
+          <Card 
+            key={token.symbol} 
+            sx={{ 
+              flex: 1, 
+              borderRadius: 3, 
+              background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+              color: 'white',
+              textAlign: 'center',
+              py: { xs: 1.5, sm: 2 }
+            }}
+          >
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                fontWeight: 'bold', 
+                fontSize: { xs: 14, sm: 16 } 
+              }}
+            >
+              {token.balance.toLocaleString()} {token.symbol}
+            </Typography>
+          </Card>
+        ))}
+      </Box>
+
       {/* Modales con transiciones y validaciones */}
       <Dialog 
         open={openSend} 
@@ -490,24 +539,6 @@ const Dashboard: React.FC = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-      {/* Balance multi-token */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'text.primary' }}>
-          Balances de Tokens
-        </Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2, mb: 2 }}>
-          {balance.map((b) => (
-            <Card key={b.symbol} sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)', color: 'white', boxShadow: '0 8px 20px rgba(0,0,0,0.2)' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" fontWeight="bold">
-                  {b.balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </Typography>
-                <Typography variant="h6" sx={{ opacity: 0.8 }}>{b.symbol}</Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-      </Box>
       {/* Balance MXNB */}
       <Box sx={{ mb: 4 }}>
         <MXNBBalance showAddTokenButton={true} />

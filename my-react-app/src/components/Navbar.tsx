@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
@@ -29,17 +35,23 @@ import { arbitrumSepolia, arbitrumOne } from '../web3/wagmiConfig';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const NavbarContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const open = Boolean(anchorEl);
-  const [openConfig, setOpenConfig] = React.useState(false);
-  const [notifAnchor, setNotifAnchor] = React.useState<null | HTMLElement>(null);
+  const [openConfig, setOpenConfig] = useState(false);
+  const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
   const notifOpen = Boolean(notifAnchor);
-  const [snackbar, setSnackbar] = React.useState<{ open: boolean; message: string; severity: 'success' | 'info' }>({ open: false, message: '', severity: 'info' });
-  const [appBarKey, setAppBarKey] = React.useState(0); // Para animación
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'info' }>({ open: false, message: '', severity: 'info' });
+  const [appBarKey, setAppBarKey] = useState(0);
 
   // Contexto global simulado
   const { 
@@ -49,15 +61,15 @@ const NavbarContent: React.FC = () => {
     notifications = [], 
     markNotificationRead = () => {}, 
     markAllNotificationsRead = () => {}, 
-    theme = 'dark', 
+    theme: appTheme = 'dark', 
     language = 'es', 
     toggleTheme = () => {}, 
     setLanguage = () => {} 
   } = useMockApp() || {};
 
   const unreadCount = notifications.filter(n => !n.read).length;
-  const [themeAnchor, setThemeAnchor] = React.useState<null | HTMLElement>(null);
-  const [langAnchor, setLangAnchor] = React.useState<null | HTMLElement>(null);
+  const [themeAnchor, setThemeAnchor] = useState<null | HTMLElement>(null);
+  const [langAnchor, setLangAnchor] = useState<null | HTMLElement>(null);
   const themeOpen = Boolean(themeAnchor);
   const langOpen = Boolean(langAnchor);
 
@@ -78,376 +90,267 @@ const NavbarContent: React.FC = () => {
   };
   const handleCloseConfig = () => setOpenConfig(false);
 
-  // Notificaciones
-  const handleNotifClick = (event: React.MouseEvent<HTMLElement>) => {
-    setNotifAnchor(event.currentTarget);
-  };
-  const handleNotifClose = () => {
-    setNotifAnchor(null);
+  // Menú móvil
+  const handleMobileMenuToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
-  // Personalización
-  const handleThemeClick = (event: React.MouseEvent<HTMLElement>) => {
-    setThemeAnchor(event.currentTarget);
-  };
-  const handleThemeClose = () => {
-    setThemeAnchor(null);
-  };
-  const handleThemeChange = () => {
-    toggleTheme();
-    setSnackbar({ open: true, message: theme === 'dark' ? 'Modo claro activado' : 'Modo oscuro activado', severity: 'info' });
-    setAppBarKey(prev => prev + 1); // Trigger animación
-    handleThemeClose();
-  };
-  const handleLangClick = (event: React.MouseEvent<HTMLElement>) => {
-    setLangAnchor(event.currentTarget);
-  };
-  const handleLangClose = () => {
-    setLangAnchor(null);
-  };
-  const handleLanguageChange = (lang: 'es' | 'en') => {
-    setLanguage(lang);
-    setSnackbar({ open: true, message: lang === 'es' ? 'Idioma cambiado a Español' : 'Language changed to English', severity: 'success' });
-    handleLangClose();
-  };
+  const menuItems = [
+    { text: 'INICIO', path: '/' },
+    { text: 'DASHBOARD', path: '/dashboard' },
+    { text: 'SEGMENTOS', path: '/segmentos' },
+    { text: 'PRECIOS', path: '/precios' },
+    { text: 'AYUDA', path: '/ayuda' }
+  ];
+
+  const renderMobileMenu = (
+    <Drawer
+      anchor="right"
+      open={mobileOpen}
+      onClose={handleMobileMenuToggle}
+      sx={{
+        '& .MuiDrawer-paper': {
+          width: '100%',
+          background: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)',
+          color: 'white',
+          display: 'flex',
+          flexDirection: 'column'
+        }
+      }}
+    >
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          p: 2,
+          borderBottom: '1px solid rgba(255,255,255,0.2)'
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          MexxaFlow
+        </Typography>
+        <IconButton color="inherit" onClick={handleMobileMenuToggle}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <List sx={{ flexGrow: 1 }}>
+        {menuItems.map((item) => (
+          <ListItem 
+            key={item.path} 
+            onClick={() => {
+              navigate(item.path);
+              handleMobileMenuToggle();
+            }}
+            sx={{ 
+              borderBottom: '1px solid rgba(255,255,255,0.1)',
+              '&:hover': { 
+                backgroundColor: 'rgba(255,255,255,0.1)' 
+              }
+            }}
+          >
+            <ListItemText 
+              primary={item.text} 
+              primaryTypographyProps={{ 
+                fontWeight: 'bold', 
+                textAlign: 'center',
+                color: location.pathname === item.path ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0.7)'
+              }}
+            />
+          </ListItem>
+        ))}
+      </List>
+      <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+        {!user ? (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Button 
+              fullWidth 
+              variant="contained" 
+              color="secondary"
+              onClick={() => {
+                navigate('/login');
+                handleMobileMenuToggle();
+              }}
+            >
+              Iniciar Sesión
+            </Button>
+            <Button 
+              fullWidth 
+              variant="outlined" 
+              color="inherit"
+              onClick={() => {
+                navigate('/registro');
+                handleMobileMenuToggle();
+              }}
+            >
+              Crear Cuenta
+            </Button>
+          </Box>
+        ) : (
+          <Button 
+            fullWidth 
+            variant="contained" 
+            color="secondary"
+            onClick={() => {
+              logout();
+              handleMobileMenuToggle();
+            }}
+          >
+            Cerrar Sesión
+          </Button>
+        )}
+      </Box>
+    </Drawer>
+  );
 
   return (
-    <AppBar key={appBarKey} position="static" sx={{ background: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)', width: '100vw', boxShadow: 2, transition: 'box-shadow 0.4s, filter 0.4s', filter: snackbar.open ? 'drop-shadow(0 0 16px #3B82F6)' : 'none' }}>
+    <AppBar 
+      key={appBarKey} 
+      position="static" 
+      sx={{ 
+        background: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%)', 
+        width: '100vw', 
+        boxShadow: 2 
+      }}
+    >
       <Toolbar sx={{ 
         width: '100%', 
         minHeight: { xs: 56, sm: 72 }, 
-        px: { xs: 3, sm: 4 }, 
+        px: { xs: 2, sm: 4 }, 
         display: 'flex', 
         justifyContent: 'space-between', 
-        alignItems: 'center',
-        position: 'relative'
+        alignItems: 'center'
       }}>
-        {/* Logo MexxaFlow con Link a Inicio */}
-        <Box sx={{ 
+        {/* Logo */}
+        <Link to="/" style={{ 
+          textDecoration: 'none', 
+          color: 'inherit', 
           display: 'flex', 
-          alignItems: 'center',
-          flex: 1
+          alignItems: 'center'
         }}>
-          <Link to="/" style={{ 
-            textDecoration: 'none', 
-            color: 'inherit', 
-            display: 'flex', 
-            alignItems: 'center'
-          }}>
-            <Typography 
-              variant="h6" 
-              component="div" 
-              sx={{ 
-                fontWeight: 'bold', 
-                display: 'flex', 
-                alignItems: 'center', 
-                fontSize: { xs: 24, sm: 36 },
-                cursor: 'pointer'
-              }}
-            >
-              MexxaFlow
-            </Typography>
-          </Link>
-        </Box>
+          <Typography 
+            variant="h6" 
+            component="div" 
+            sx={{ 
+              fontWeight: 'bold', 
+              fontSize: { xs: 20, sm: 24 }
+            }}
+          >
+            MexxaFlow
+          </Typography>
+        </Link>
 
-        {/* Enlaces */}
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 2,
-          justifyContent: 'center',
-          flex: 2
-        }}>
-          <Button 
-            component={Link} 
-            to="/" 
-            color="inherit" 
-            variant={location.pathname === '/' ? 'outlined' : 'text'} 
-            sx={{ 
-              fontWeight: 'bold', 
-              fontSize: 16, 
-              px: 1.5,
-              textTransform: 'none',
-              borderRadius: 2,
-              '&.Mui-outlined': {
-                border: '1px solid white'
-              }
-            }}
-          >
-            INICIO
-          </Button>
-          <Button 
-            component={Link} 
-            to="/dashboard" 
-            color="inherit" 
-            variant={location.pathname === '/dashboard' ? 'outlined' : 'text'} 
-            sx={{ 
-              fontWeight: 'bold', 
-              fontSize: 16, 
-              px: 1.5,
-              textTransform: 'none',
-              borderRadius: 2,
-              '&.Mui-outlined': {
-                border: '1px solid white'
-              }
-            }}
-          >
-            DASHBOARD
-          </Button>
-          <Button 
-            component={Link} 
-            to="/segmentos" 
-            color="inherit" 
-            variant={location.pathname === '/segmentos' ? 'outlined' : 'text'} 
-            sx={{ 
-              fontWeight: 'bold', 
-              fontSize: 16, 
-              px: 1.5,
-              textTransform: 'none',
-              borderRadius: 2,
-              '&.Mui-outlined': {
-                border: '1px solid white'
-              }
-            }}
-          >
-            SEGMENTOS
-          </Button>
-          <Button 
-            component={Link} 
-            to="/precios" 
-            color="inherit" 
-            variant={location.pathname === '/precios' ? 'outlined' : 'text'} 
-            sx={{ 
-              fontWeight: 'bold', 
-              fontSize: 16, 
-              px: 1.5,
-              textTransform: 'none',
-              borderRadius: 2,
-              '&.Mui-outlined': {
-                border: '1px solid white'
-              }
-            }}
-          >
-            PRECIOS
-          </Button>
-          <Button 
-            component={Link} 
-            to="/ayuda" 
-            color="inherit" 
-            variant={location.pathname === '/ayuda' ? 'outlined' : 'text'} 
-            sx={{ 
-              fontWeight: 'bold', 
-              fontSize: 16, 
-              px: 1.5,
-              textTransform: 'none',
-              borderRadius: 2,
-              '&.Mui-outlined': {
-                border: '1px solid white'
-              }
-            }}
-          >
-            AYUDA
-          </Button>
-        </Box>
+        {/* Menú de escritorio */}
+        {!isMobile ? (
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 2
+          }}>
+            {menuItems.map((item) => (
+              <Button 
+                key={item.path}
+                component={Link} 
+                to={item.path} 
+                color="inherit" 
+                variant={location.pathname === item.path ? 'outlined' : 'text'} 
+                sx={{ 
+                  fontWeight: 'bold', 
+                  fontSize: 16, 
+                  px: 1.5,
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  '&.Mui-outlined': {
+                    border: '1px solid white'
+                  }
+                }}
+              >
+                {item.text}
+              </Button>
+            ))}
+          </Box>
+        ) : null}
 
         {/* Botones de la derecha */}
         <Box sx={{ 
           display: 'flex', 
           alignItems: 'center', 
-          gap: 2,
-          justifyContent: 'flex-start',
-          flex: 1
+          gap: { xs: 0.5, sm: 1 }
         }}>
-          {/* Balance MXNB compacto */}
-          <Box sx={{ 
-            display: { xs: 'none', md: 'block' },
-            color: 'white',
-            px: 2,
-            py: 1,
-            borderRadius: 2,
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(10px)'
-          }}>
-            <MXNBBalance compact={true} showAddTokenButton={false} />
-          </Box>
-
-          {/* Notificaciones mock */}
-          <IconButton color="inherit" onClick={handleNotifClick} sx={{ ml: 1 }}>
-            <Badge badgeContent={unreadCount} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <Menu
-            anchorEl={notifAnchor}
-            open={notifOpen}
-            onClose={handleNotifClose}
-            PaperProps={{ sx: { minWidth: 280 } }}
-          >
-            <MenuItem disabled sx={{ fontWeight: 'bold' }}>Notificaciones</MenuItem>
-            {notifications.length === 0 && (
-              <MenuItem disabled>No hay notificaciones</MenuItem>
-            )}
-            {notifications.map(n => (
-              <MenuItem
-                key={n.id}
-                onClick={() => { markNotificationRead(n.id); handleNotifClose(); }}
-                sx={{ fontWeight: n.read ? 'normal' : 'bold', whiteSpace: 'normal' }}
-              >
-                {n.message}
-                <Typography variant="caption" sx={{ ml: 1, color: 'text.secondary' }}>
-                  {n.date.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
-                </Typography>
-              </MenuItem>
-            ))}
-            {notifications.length > 0 && (
-              <MenuItem onClick={() => { markAllNotificationsRead(); handleNotifClose(); }} sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-                Marcar todas como leídas
-              </MenuItem>
-            )}
-          </Menu>
-
-          {/* Selector de tema */}
-          <IconButton color="inherit" onClick={handleThemeClick}>
-            {theme === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
-          </IconButton>
-          <Menu
-            anchorEl={themeAnchor}
-            open={themeOpen}
-            onClose={handleThemeClose}
-            PaperProps={{ sx: { minWidth: 120 } }}
-          >
-            <MenuItem onClick={handleThemeChange}>
-              {theme === 'dark' ? <LightModeIcon sx={{ mr: 1 }} /> : <DarkModeIcon sx={{ mr: 1 }} />}
-              {theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-            </MenuItem>
-          </Menu>
-
-          {/* Selector de idioma */}
-          <IconButton color="inherit" onClick={handleLangClick}>
-            <TranslateIcon />
-          </IconButton>
-          <Menu
-            anchorEl={langAnchor}
-            open={langOpen}
-            onClose={handleLangClose}
-            PaperProps={{ sx: { minWidth: 120 } }}
-          >
-            <MenuItem onClick={() => handleLanguageChange('es')}>
-              🇪🇸 Español
-            </MenuItem>
-            <MenuItem onClick={() => handleLanguageChange('en')}>
-              🇺🇸 English
-            </MenuItem>
-          </Menu>
-
-          {/* Selector de red */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: '#60a5fa', fontWeight: 600, fontSize: 14 }}>
-              {currentChain ? `Red: ${currentChain.name}` : 'Red: -'}
-            </span>
-            {chains.map((c) => (
-              <button
-                key={c.id}
-                style={{
-                  background: chainId === c.id ? '#2563eb' : '#1e293b',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '4px 12px',
-                  marginRight: 4,
-                  cursor: 'pointer',
-                  fontWeight: 600
-                }}
-                onClick={() => switchChain?.({ chainId: c.id })}
-                disabled={chainId === c.id}
-              >
-                {c.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Logo y nombre del wallet conectado */}
-          {isConnected && connector && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#1e293b', borderRadius: 8, padding: '4px 10px' }}>
-              {connector.icon && (
-                <img src={connector.icon} alt={connector.name} width={24} height={24} style={{ borderRadius: 4 }} />
-              )}
-              <span style={{ color: 'white', fontWeight: 600, fontSize: 14 }}>{connector.name}</span>
-            </div>
-          )}
-
-          {/* Usuario simulado */}
-          {user ? (
-            <>
-              <IconButton size="large" edge="end" color="inherit" onClick={handleMenu}>
-                <Avatar src={user.avatar} alt={user.name} sx={{ width: 32, height: 32, mr: 1 }} />
-              </IconButton>
-              <Menu
-                id="profile-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  'aria-labelledby': 'profile-button',
-                }}
-              >
-                <MenuItem disabled>{user.name}</MenuItem>
-                <MenuItem onClick={() => { handleClose(); navigate('/dashboard'); }}>Dashboard</MenuItem>
-                <MenuItem onClick={handleOpenConfig}>Configuración</MenuItem>
-                <MenuItem onClick={() => { logout(); handleClose(); }}>Cerrar sesión</MenuItem>
-              </Menu>
-            </>
+          {/* Menú hamburguesa para móviles */}
+          {isMobile ? (
+            <IconButton 
+              color="inherit" 
+              onClick={handleMobileMenuToggle}
+              sx={{ ml: 1 }}
+            >
+              <MenuIcon />
+            </IconButton>
           ) : (
-            <>
-              <IconButton 
-                color="inherit" 
-                onClick={handleMenu}
-                sx={{ ml: 1 }}
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-              >
-                <MenuItem onClick={() => { handleClose(); navigate('/login'); }}>
-                  Iniciar Sesión
-                </MenuItem>
-                <MenuItem onClick={() => { handleClose(); navigate('/registro'); }}>
-                  Crear Cuenta
-                </MenuItem>
-              </Menu>
-            </>
+            // Menú de usuario para escritorio
+            !user ? (
+              <>
+                <IconButton 
+                  color="inherit" 
+                  onClick={handleMenu}
+                  sx={{ ml: 1 }}
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                >
+                  <MenuItem onClick={() => { handleClose(); navigate('/login'); }}>
+                    Iniciar Sesión
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleClose(); navigate('/registro'); }}>
+                    Crear Cuenta
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <IconButton 
+                  color="inherit" 
+                  onClick={handleMenu}
+                  sx={{ ml: 1 }}
+                >
+                  <Avatar src={user.avatar} alt={user.name} sx={{ width: 32, height: 32 }} />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                >
+                  <MenuItem onClick={handleOpenConfig}>Configuración</MenuItem>
+                  <MenuItem onClick={() => { logout(); handleClose(); }}>Cerrar sesión</MenuItem>
+                </Menu>
+              </>
+            )
           )}
-
-          <Dialog open={openConfig} onClose={handleCloseConfig}>
-            <DialogTitle>Configuración</DialogTitle>
-            <DialogContent>
-              <p>Aquí puedes poner las opciones de configuración de usuario.</p>
-            </DialogContent>
-          </Dialog>
         </Box>
       </Toolbar>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={2000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        TransitionComponent={Slide}
-      >
-        <MuiAlert elevation={6} variant="filled" onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </MuiAlert>
-      </Snackbar>
+
+      {/* Menú móvil */}
+      {isMobile && renderMobileMenu}
     </AppBar>
   );
 };
