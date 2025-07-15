@@ -29,9 +29,9 @@ const badges = [
 
 const Badges: React.FC = () => {
   return (
-    <div className="bg-black text-white p-4 rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Logros y Badges</h2>
-      <div className="space-y-4">
+    <div className="bg-black text-white p-4 rounded-lg max-w-md mx-auto">
+      <h2 className="text-lg md:text-xl font-bold mb-4">Logros y Badges</h2>
+      <div className="space-y-3 md:space-y-4">
         {badges.map((badge, index) => (
           <div 
             key={index} 
@@ -40,11 +40,11 @@ const Badges: React.FC = () => {
               ${badge.active ? 'opacity-100' : 'opacity-50'}
             `}
           >
-            <span className="text-2xl mr-4">{badge.icon}</span>
+            <span className="text-xl md:text-2xl mr-3 md:mr-4">{badge.icon}</span>
             <div className="flex-grow">
-              <div className="font-semibold">{badge.name}</div>
+              <div className="text-sm md:text-base font-semibold">{badge.name}</div>
               {badge.status && (
-                <div className="text-sm text-gray-400">{badge.status}</div>
+                <div className="text-xs md:text-sm text-gray-400">{badge.status}</div>
               )}
             </div>
           </div>
